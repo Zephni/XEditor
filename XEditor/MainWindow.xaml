@@ -17,7 +17,7 @@
         </VisualBrush>
     </Window.Resources>
     <Grid Background="Gray">
-        <DockPanel>
+        <DockPanel Margin="0,0,0,24">
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Open"/>
@@ -36,16 +36,18 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" Background="LightGray">
-                    <TextBox x:Name="DebugText" HorizontalAlignment="Left" Height="23" Margin="10,492,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="180"/>
-                </Grid>
+                <Grid Grid.Column="0" Background="LightGray"/>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
-                <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
+                <ScrollViewer x:Name="EditorScroller" Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
                     <Grid Name="EditorGrid" Background="{StaticResource GridBrush}">
                         <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
                     </Grid>
                 </ScrollViewer>
             </Grid>
         </DockPanel>
+        <StatusBar Height="24" VerticalAlignment="Bottom" Padding="4,0,4,0" >
+            <StatusBarItem x:Name="StatusBarTextLeft" Content="Loaded"></StatusBarItem>
+            <StatusBarItem x:Name="StatusBarTextRight" Content="" HorizontalAlignment="Right"></StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

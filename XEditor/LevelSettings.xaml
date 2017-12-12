@@ -5,8 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XEditor"
         mc:Ignorable="d"
-        Title="LevelSettings" Height="300" Width="300">
+        Title="LevelSettings" Height="200" Width="400">
     <Grid>
-        
+        <StackPanel Margin="10,10,10,10">
+            <Label Content="Grid size" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <Grid Margin="16,10, 24,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="24" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Content="X" Grid.Column="0"></Label>
+                <TextBox x:Name="GridSize_X" Grid.Column="1" FontSize="16" />
+                <Label Content="Y" Grid.Column="3"></Label>
+                <TextBox x:Name="GridSize_Y" Grid.Column="4" FontSize="16"/>
+            </Grid>
+            <Button Margin="16,32,24,0" Padding="0,4,0,4" Content="Apply" Click="Apply_Click" />
+        </StackPanel>
     </Grid>
 </Window>

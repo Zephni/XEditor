@@ -22,6 +22,19 @@ namespace XEditor
         public LevelSettings()
         {
             InitializeComponent();
+
+            GridSize_X.Text = Global.MapSize.X.ToString();
+            GridSize_Y.Text = Global.MapSize.Y.ToString();
+        }
+
+        private void Apply_Click(object sender, RoutedEventArgs e)
+        {
+            Global.MapSize = new Point(
+                Convert.ToInt32(GridSize_X.Text),
+                Convert.ToInt32(GridSize_Y.Text)
+            );
+
+            this.Close();
         }
     }
 }

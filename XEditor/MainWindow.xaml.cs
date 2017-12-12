@@ -28,6 +28,7 @@ namespace XEditor
             Selector.Visibility = Visibility.Hidden;
             Global.TileSize = 16;
             Global.Tiles = new List<Tile>();
+            Global.MapSize = new Point(64, 64);
         }
 
         public void Update()
@@ -47,6 +48,8 @@ namespace XEditor
 
                 if(Global.SelectorMode == SelectorModes.Normal)
                 {
+                    Global.StatusBarTextRight = Global.SelectorIndex.ToString();
+
                     Selector.Margin = new Thickness(Global.SelectorIndex.X * Global.TileSize, Global.SelectorIndex.Y * Global.TileSize, 0, 0);
                     Selector.Width = Global.TileSize + 1;
                     Selector.Height = Global.TileSize + 1;
@@ -81,15 +84,24 @@ namespace XEditor
                     Selector.Width = Width * Global.TileSize + (Global.TileSize + 1);
                     Selector.Height = Height * Global.TileSize + (Global.TileSize + 1);
 
+
+                    if (Global.ActionType == ActionTypes.AddingTiles)
+                        Global.StatusBarTextRight = "Drawing to area " + LeftMost + ", " + TopMost + " (size " + (Width + 1) + ", " + (Height + 1) + ")";
+                    else if (Global.ActionType == ActionTypes.RemovingTiles)
+                        Global.StatusBarTextRight = "Deleting area " + LeftMost + ", " + TopMost + " (size " + (Width + 1) + ", " + (Height + 1) + ")";
+
                     if (Global.ActionType == ActionTypes.AddingTiles && e.LeftButton == MouseButtonState.Released)
                     {
                         Global.SelectorMode = SelectorModes.Normal;
+                        int tileCount = 0;
 
                         // Place tile/s
                         for (int X = LeftMost; X <= LeftMost + Width; X++)
                         {
                             for (int Y = TopMost; Y <= TopMost + Height; Y++)
                             {
+                                tileCount++;
+
                                 Tile tile = new Tile {
                                     Location = new Point(X, Y)
                                 };
@@ -105,11 +117,14 @@ namespace XEditor
                                 Global.Tiles.Add(tile);
                             }
                         }
+
+                        Global.StatusBarTextLeft = "Added " + tileCount + " tiles";
                     }
 
                     if (Global.ActionType == ActionTypes.RemovingTiles && e.RightButton == MouseButtonState.Released)
                     {
                         Global.SelectorMode = SelectorModes.Normal;
+                        int tileCount = 0;
 
                         for (int X = LeftMost; X <= LeftMost + Width; X++)
                         {
@@ -119,12 +134,15 @@ namespace XEditor
                                 {
                                     if (Global.Tiles[I].Location.X == X && Global.Tiles[I].Location.Y == Y)
                                     {
+                                        tileCount++;
                                         EditorGrid.Children.Remove(Global.Tiles[I].Rectangle);
                                         Global.Tiles.Remove(Global.Tiles[I]);
                                     }
                                 }
                             }
                         }
+
+                        Global.StatusBarTextLeft = "Removed "+tileCount+" tiles";
                     }
                 }
             }
