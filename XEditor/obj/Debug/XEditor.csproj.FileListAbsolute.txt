@@ -1,0 +1,3 @@
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\bin\Debug\XEngine.exe.config
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEngine.exe
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEngine.pdb

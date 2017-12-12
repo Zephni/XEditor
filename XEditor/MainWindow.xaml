@@ -1,0 +1,51 @@
+﻿<Window x:Class="XEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:XEditor"
+        mc:Ignorable="d"
+        Title="XEngine" Width="800" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
+    <Window.Resources>
+        <VisualBrush x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
+            <VisualBrush.Visual>
+                <Grid Background="White">
+                    <Path Data="M 0 0 L 0 16" Stroke="Gray" />
+                    <Path Data="M 0 0 L 16 0" Stroke="Gray" />
+                </Grid>
+            </VisualBrush.Visual>
+        </VisualBrush>
+    </Window.Resources>
+    <Grid Background="Gray">
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open"/>
+                    <MenuItem Header="_Close"/>
+                    <MenuItem Header="_Save"/>
+                </MenuItem>
+                <MenuItem Header="Level">
+                    <MenuItem Header="Settings" Click="LevelSettings_Click"/>
+                </MenuItem>
+            </Menu>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200" MaxWidth="350" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0" Background="LightGray">
+                    <TextBox x:Name="DebugText" HorizontalAlignment="Left" Height="23" Margin="10,492,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="180"/>
+                </Grid>
+                <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+                <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
+                    <Grid Name="EditorGrid" Background="{StaticResource GridBrush}">
+                        <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>
