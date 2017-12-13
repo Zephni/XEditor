@@ -34,7 +34,21 @@ namespace XEditor
                 Convert.ToInt32(GridSize_Y.Text)
             );
 
+            Global.TexturePath = TilesetPath.Text;
+
             this.Close();
+        }
+
+        private void Browse_Tileset(object sender, RoutedEventArgs e)
+        {
+            ;Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.FileName = TilesetPath.Text;
+            ofd.RestoreDirectory = true;
+            if(ofd.ShowDialog(this) == true)
+            {
+                TilesetPath.Text = ofd.FileName;
+                TilesetPath.ScrollToEnd();
+            }
         }
     }
 }

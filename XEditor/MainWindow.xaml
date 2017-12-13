@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XEditor"
         mc:Ignorable="d"
-        Title="XEngine" Width="800" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
+        Title="XEngine" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
     <Window.Resources>
         <VisualBrush x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
             <VisualBrush.Visual>
@@ -31,12 +31,22 @@
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="200" MaxWidth="350" />
+                    <ColumnDefinition Width="*" MinWidth="200" MaxWidth="350" />
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="0" Background="LightGray"/>
+                <Grid Grid.Column="0" Background="LightGray">
+                    <StackPanel>
+                        <Label Margin="0,8,0,0">Tileset</Label>
+                        <ScrollViewer Background="Gray" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Height="260" Margin="12,6,12,12">
+                            <Grid x:Name="TilesetGrid" Background="White">
+                                <Rectangle Name="TilesetSelector" Panel.ZIndex="10" Width="16" Height="16" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
+                                <Rectangle Name="TilesetSelectedArea" Panel.ZIndex="9" Width="32" Height="32" Stroke="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
+                            </Grid>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Grid>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
                 <ScrollViewer x:Name="EditorScroller" Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
                     <Grid Name="EditorGrid" Background="{StaticResource GridBrush}">

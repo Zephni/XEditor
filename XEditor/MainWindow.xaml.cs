@@ -37,22 +37,24 @@ namespace XEditor
             MouseUpdates(Global.MouseEventArgs);
         }
 
-        public void MouseUpdates(MouseEventArgs e)
+        public void EditorGridMouseUpdates(MouseEventArgs e)
         {
+            Rectangle ThisSelector = Selector;
+
             if (EditorGrid.IsMouseOver)
             {
-                Selector.Stroke = new SolidColorBrush(Colors.Black);
+                ThisSelector.Stroke = new SolidColorBrush(Colors.Black);
 
-                Selector.Visibility = Visibility.Visible;
+                ThisSelector.Visibility = Visibility.Visible;
                 Global.SelectorIndex = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
 
-                if(Global.SelectorMode == SelectorModes.Normal)
+                if (Global.SelectorMode == SelectorModes.Normal)
                 {
                     Global.StatusBarTextRight = Global.SelectorIndex.ToString();
 
-                    Selector.Margin = new Thickness(Global.SelectorIndex.X * Global.TileSize, Global.SelectorIndex.Y * Global.TileSize, 0, 0);
-                    Selector.Width = Global.TileSize + 1;
-                    Selector.Height = Global.TileSize + 1;
+                    ThisSelector.Margin = new Thickness(Global.SelectorIndex.X * Global.TileSize, Global.SelectorIndex.Y * Global.TileSize, 0, 0);
+                    ThisSelector.Width = Global.TileSize + 1;
+                    ThisSelector.Height = Global.TileSize + 1;
 
                     if (e.LeftButton == MouseButtonState.Pressed)
                     {
@@ -61,28 +63,28 @@ namespace XEditor
                         Global.ActionType = ActionTypes.AddingTiles;
                     }
 
-                    if(e.RightButton == MouseButtonState.Pressed)
+                    if (e.RightButton == MouseButtonState.Pressed)
                     {
                         Global.SelectorHoldIndex = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
                         Global.SelectorMode = SelectorModes.SelectingArea;
                         Global.ActionType = ActionTypes.RemovingTiles;
                     }
                 }
-                else if(Global.SelectorMode == SelectorModes.SelectingArea)
+                else if (Global.SelectorMode == SelectorModes.SelectingArea)
                 {
                     if (Global.ActionType == ActionTypes.AddingTiles)
-                        Selector.Stroke = new SolidColorBrush(Colors.Green);
+                        ThisSelector.Stroke = new SolidColorBrush(Colors.Green);
                     else if (Global.ActionType == ActionTypes.RemovingTiles)
-                        Selector.Stroke = new SolidColorBrush(Colors.Red);
+                        ThisSelector.Stroke = new SolidColorBrush(Colors.Red);
 
                     int LeftMost = (int)((Global.SelectorIndex.X >= Global.SelectorHoldIndex.X) ? Global.SelectorHoldIndex.X : Global.SelectorIndex.X);
                     int TopMost = (int)((Global.SelectorIndex.Y >= Global.SelectorHoldIndex.Y) ? Global.SelectorHoldIndex.Y : Global.SelectorIndex.Y);
                     int Width = (int)Math.Abs(Global.SelectorHoldIndex.X - Global.SelectorIndex.X);
                     int Height = (int)Math.Abs(Global.SelectorHoldIndex.Y - Global.SelectorIndex.Y);
 
-                    Selector.Margin = new Thickness(LeftMost * Global.TileSize, TopMost * Global.TileSize, 0, 0);
-                    Selector.Width = Width * Global.TileSize + (Global.TileSize + 1);
-                    Selector.Height = Height * Global.TileSize + (Global.TileSize + 1);
+                    ThisSelector.Margin = new Thickness(LeftMost * Global.TileSize, TopMost * Global.TileSize, 0, 0);
+                    ThisSelector.Width = Width * Global.TileSize + (Global.TileSize + 1);
+                    ThisSelector.Height = Height * Global.TileSize + (Global.TileSize + 1);
 
 
                     if (Global.ActionType == ActionTypes.AddingTiles)
@@ -95,24 +97,19 @@ namespace XEditor
                         Global.SelectorMode = SelectorModes.Normal;
                         int tileCount = 0;
 
+                        if (Global.SelectedTiles == null)
+                            return;
+
                         // Place tile/s
-                        for (int X = LeftMost; X <= LeftMost + Width; X++)
+                        for (int x = LeftMost; x <= LeftMost + Width; x++)
                         {
-                            for (int Y = TopMost; Y <= TopMost + Height; Y++)
+                            for (int y = TopMost; y <= TopMost + Height; y++)
                             {
                                 tileCount++;
-
-                                Tile tile = new Tile {
-                                    Location = new Point(X, Y)
-                                };
-
-                                tile.Rectangle = new Rectangle();
-                                tile.Rectangle.HorizontalAlignment = HorizontalAlignment.Left;
-                                tile.Rectangle.VerticalAlignment = VerticalAlignment.Top;
-                                tile.Rectangle.Fill = new SolidColorBrush(Colors.Blue);
-                                tile.Rectangle.Margin = new Thickness(X * Global.TileSize, Y * Global.TileSize, 0, 0);
-                                tile.Rectangle.Width = Global.TileSize;
-                                tile.Rectangle.Height = Global.TileSize;
+                                int X = Global.WrapValue(x - LeftMost, 0, Global.SelectedTiles.GetLength(0));
+                                int Y = Global.WrapValue(y - TopMost, 0, Global.SelectedTiles.GetLength(1));
+                                Tile tile = Global.SelectedTiles[X, Y].DeepCopy();
+                                tile.Location = new Point(x, y);
                                 EditorGrid.Children.Add(tile.Rectangle);
                                 Global.Tiles.Add(tile);
                             }
@@ -142,14 +139,102 @@ namespace XEditor
                             }
                         }
 
-                        Global.StatusBarTextLeft = "Removed "+tileCount+" tiles";
+                        Global.StatusBarTextLeft = "Removed " + tileCount + " tiles";
                     }
                 }
             }
             else
             {
-                Selector.Visibility = Visibility.Hidden;
+                ThisSelector.Visibility = Visibility.Hidden;
             }
+        }
+
+        public void TilesetMouseUpdates(MouseEventArgs e)
+        {
+            Rectangle ThisSelector = TilesetSelector;
+            ThisSelector.Stroke = new SolidColorBrush(Colors.Red);
+
+            if (TilesetGrid.IsMouseOver)
+            {
+                ThisSelector.Visibility = Visibility.Visible;
+                Global.TileSelectorIndex = new Point((int)(e.GetPosition(TilesetGrid).X / Global.TileSize), (int)(e.GetPosition(TilesetGrid).Y / Global.TileSize));
+
+                if (Global.TileSelectorMode == SelectorModes.Normal)
+                {
+                    Global.StatusBarTextRight = Global.SelectorIndex.ToString();
+
+                    ThisSelector.Margin = new Thickness(Global.TileSelectorIndex.X * Global.TileSize, Global.TileSelectorIndex.Y * Global.TileSize, 0, 0);
+                    ThisSelector.Width = Global.TileSize + 1;
+                    ThisSelector.Height = Global.TileSize + 1;
+
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        Global.TileSelectorHoldIndex = new Point(Global.TileSelectorIndex.X, Global.TileSelectorIndex.Y);
+                        Global.TileSelectorMode = SelectorModes.SelectingArea;
+                    }
+                }
+                else if (Global.TileSelectorMode == SelectorModes.SelectingArea)
+                {
+                    int LeftMost = (int)((Global.TileSelectorIndex.X >= Global.TileSelectorHoldIndex.X) ? Global.TileSelectorHoldIndex.X : Global.TileSelectorIndex.X);
+                    int TopMost = (int)((Global.TileSelectorIndex.Y >= Global.TileSelectorHoldIndex.Y) ? Global.TileSelectorHoldIndex.Y : Global.TileSelectorIndex.Y);
+                    int Width = (int)Math.Abs(Global.TileSelectorHoldIndex.X - Global.TileSelectorIndex.X);
+                    int Height = (int)Math.Abs(Global.TileSelectorHoldIndex.Y - Global.TileSelectorIndex.Y);
+
+                    ThisSelector.Margin = new Thickness(LeftMost * Global.TileSize, TopMost * Global.TileSize, 0, 0);
+                    ThisSelector.Width = Width * Global.TileSize + (Global.TileSize);
+                    ThisSelector.Height = Height * Global.TileSize + (Global.TileSize);
+
+                    if (e.LeftButton == MouseButtonState.Released)
+                    {
+                        Global.TileSelectorMode = SelectorModes.Normal;
+                        TilesetSelectArea(new Rect(LeftMost, TopMost, Width+1, Height+1));
+                        Global.StatusBarTextLeft = "Selected tileset area";
+                    }
+                }
+            }
+            else
+            {
+                ThisSelector.Visibility = Visibility.Hidden;
+            }
+        }
+
+        public void TilesetSelectArea(Rect rect)
+        {
+            TilesetSelectedArea.Visibility = Visibility.Visible;
+            TilesetSelectedArea.Margin = new Thickness(rect.Left * Global.TileSize, rect.Top * Global.TileSize, 0, 0);
+            TilesetSelectedArea.Width = rect.Width * Global.TileSize;
+            TilesetSelectedArea.Height = rect.Height * Global.TileSize;
+
+            // Logic here
+            Global.SelectedTiles = new Tile[(int)rect.Width, (int)rect.Height];
+
+            for (int x = 0; x < rect.Width; x++)
+            {
+                for (int y = 0; y < rect.Height; y++)
+                {
+                    CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)(rect.X + x) * 16, (int)(rect.Y + y) * 16, Global.TileSize, Global.TileSize));
+
+                    Tile tile = new Tile
+                    {
+                        Rectangle = new Rectangle
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Fill = new ImageBrush(cb),
+                            Width = Global.TileSize,
+                            Height = Global.TileSize
+                        }
+                    };
+
+                    Global.SelectedTiles[x, y] = tile;
+                }
+            }
+        }
+
+        public void MouseUpdates(MouseEventArgs e)
+        {
+            EditorGridMouseUpdates(e);
+            TilesetMouseUpdates(e);
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e;}
