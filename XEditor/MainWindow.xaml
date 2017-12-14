@@ -41,8 +41,8 @@
                         <Label Margin="0,8,0,0">Tileset</Label>
                         <ScrollViewer Background="Gray" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Height="260" Margin="12,6,12,12">
                             <Grid x:Name="TilesetGrid" Background="White">
-                                <Rectangle Name="TilesetSelector" Panel.ZIndex="10" Width="16" Height="16" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
-                                <Rectangle Name="TilesetSelectedArea" Panel.ZIndex="9" Width="32" Height="32" Stroke="Blue" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
+                                <Rectangle Name="TilesetSelector" Panel.ZIndex="10" Width="16" Height="16" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
+                                <Rectangle Name="TilesetSelectedArea" Panel.ZIndex="9" Width="32" Height="32" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
                             </Grid>
                         </ScrollViewer>
                     </StackPanel>
