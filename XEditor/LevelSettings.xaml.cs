@@ -23,18 +23,25 @@ namespace XEditor
         {
             InitializeComponent();
 
-            GridSize_X.Text = Global.MapSize.X.ToString();
-            GridSize_Y.Text = Global.MapSize.Y.ToString();
+            if(Global.State != States.MapOpen)
+            {
+                GridSize_X.Text = "64";
+                GridSize_Y.Text = "64";
+                TilesetPath.Text = Global.TexturePath;
+                ApplyButton.Content = "Create new level";
+            }
+            else
+            {
+                GridSize_X.Text = Global.MapSize.X.ToString();
+                GridSize_Y.Text = Global.MapSize.Y.ToString();
+                TilesetPath.Text = Global.TexturePath;
+                ApplyButton.Content = "Apply changes";
+            }
         }
 
         private void Apply_Click(object sender, RoutedEventArgs e)
         {
-            Global.MapSize = new Point(
-                Convert.ToInt32(GridSize_X.Text),
-                Convert.ToInt32(GridSize_Y.Text)
-            );
-
-            Global.TexturePath = TilesetPath.Text;
+            MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text);
 
             this.Close();
         }

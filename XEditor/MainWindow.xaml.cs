@@ -27,8 +27,7 @@ namespace XEditor
             StaticUpdate.Start(Update);
             Selector.Visibility = Visibility.Hidden;
             Global.TileSize = 16;
-            Global.Tiles = new List<Tile>();
-            Global.MapSize = new Point(64, 64);
+            Global.State = States.Initialised;
         }
 
         public void Update()
@@ -111,17 +110,12 @@ namespace XEditor
                                 Tile tile = Global.SelectedTiles[X, Y].DeepCopy();
                                 tile.Location = new Point(x, y);
 
-                                for(int I = 0; I < Global.Tiles.Count; I++)
-                                {
-                                    if (Global.Tiles[I].Location == tile.Location)
-                                    {
-                                        EditorGrid.Children.Remove(Global.Tiles[I].Rectangle);
-                                        Global.Tiles.Remove(Global.Tiles[I]);
-                                    }
-                                }
+                                // Remove old if exists
+                                RemoveTile(x, y);
 
+                                // Add new
                                 EditorGrid.Children.Add(tile.Rectangle);
-                                Global.Tiles.Add(tile);
+                                Global.Tiles[x, y] = tile;
                             }
                         }
 
@@ -137,15 +131,8 @@ namespace XEditor
                         {
                             for (int Y = TopMost; Y <= TopMost + Height; Y++)
                             {
-                                for (int I = 0; I < Global.Tiles.Count; I++)
-                                {
-                                    if (Global.Tiles[I].Location.X == X && Global.Tiles[I].Location.Y == Y)
-                                    {
-                                        tileCount++;
-                                        EditorGrid.Children.Remove(Global.Tiles[I].Rectangle);
-                                        Global.Tiles.Remove(Global.Tiles[I]);
-                                    }
-                                }
+                                if(RemoveTile(X, Y))
+                                    tileCount++;
                             }
                         }
 
@@ -248,8 +235,40 @@ namespace XEditor
 
         public void MouseUpdates(MouseEventArgs e)
         {
-            EditorGridMouseUpdates(e);
-            TilesetMouseUpdates(e);
+            if(Global.State == States.MapOpen)
+            {
+                EditorGridMouseUpdates(e);
+                TilesetMouseUpdates(e);
+            }
+        }
+
+        // Add / Remove tile
+        public bool RemoveTile(int x, int y)
+        {
+            if (Global.Tiles[x, y] == null)
+                return false;
+
+            EditorGrid.Children.Remove(Global.Tiles[x, y].Rectangle);
+            Global.Tiles[x, y] = null;
+            return true;
+        }
+
+        // Open map
+        public void OpenMap(Point mapSize, string texturePath)
+        {
+            Global.MapSize = mapSize;
+            Global.TexturePath = texturePath;
+            Global.State = States.MapOpen;
+        }
+
+        //  Close map
+        public void CloseMap()
+        {
+            for (int x = 0; x < Global.Tiles.GetLength(0); x++)
+                for (int y = 0; y < Global.Tiles.GetLength(1); y++)
+                    RemoveTile(x, y);
+
+             Global.State = States.MapClosed;
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e;}
@@ -260,7 +279,18 @@ namespace XEditor
         private void LevelSettings_Click(object sender, RoutedEventArgs e)
         {
             LevelSettings ls = new LevelSettings();
-            ls.Show();
+            ls.ShowDialog();
+        }
+
+        private void File_New_Click(object sender, RoutedEventArgs e)
+        {
+            LevelSettings ls = new LevelSettings();
+            ls.ShowDialog();
+        }
+
+        private void File_Close_Click(object sender, RoutedEventArgs e)
+        {
+            CloseMap();
         }
     }
 }

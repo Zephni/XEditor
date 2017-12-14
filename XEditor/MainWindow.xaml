@@ -18,18 +18,21 @@
     </Window.Resources>
     <Grid Background="Gray">
         <DockPanel Margin="0,0,0,24">
-            <Menu DockPanel.Dock="Top">
+            <Menu x:Name="DockMenu" DockPanel.Dock="Top">
                 <MenuItem Header="_File">
+                    <MenuItem Header="_New" Click="File_New_Click" />
                     <MenuItem Header="_Open"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
+                    <MenuItem x:Name="Menu_Close" Header="_Close" Click="File_Close_Click" />
+                    <MenuItem x:Name="Menu_Save" Header="_Save"/>
+                    <MenuItem x:Name="Menu_SaveAs" Header="_Save as"/>
+                    <MenuItem x:Name="Exit" Header="_Exit"/>
                 </MenuItem>
-                <MenuItem Header="Level">
-                    <MenuItem Header="Settings" Click="LevelSettings_Click"/>
+                <MenuItem Header="Edit">
+                    <MenuItem x:Name="Menu_LevelSettings" Header="Level Settings" Click="LevelSettings_Click" IsEnabled="False" />
                 </MenuItem>
             </Menu>
 
-            <Grid>
+            <Grid x:Name="EditorContainer" Visibility="Hidden">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="200" MaxWidth="350" />
                     <ColumnDefinition Width="5" />

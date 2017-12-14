@@ -10,6 +10,13 @@ using System.Windows.Media.Imaging;
 
 namespace XEditor
 {
+    public enum States
+    {
+        Initialised,
+        MapOpen,
+        MapClosed
+    }
+
     public enum SelectorModes
     {
         Normal,
@@ -24,9 +31,35 @@ namespace XEditor
 
     public static class Global
     {
+        private static States state;
+        public static States State
+        {
+            get { return state; }
+            set {
+                state = value;
+
+                if (state == States.MapOpen)
+                {
+                    MainWindow.Instance.EditorContainer.Visibility = Visibility.Visible;
+                    MainWindow.Instance.Menu_LevelSettings.IsEnabled = true;
+                    MainWindow.Instance.Menu_Close.IsEnabled = true;
+                    MainWindow.Instance.Menu_Save.IsEnabled = true;
+                    MainWindow.Instance.Menu_SaveAs.IsEnabled = true;
+                }
+                else
+                {
+                    MainWindow.Instance.EditorContainer.Visibility = Visibility.Hidden;
+                    MainWindow.Instance.Menu_LevelSettings.IsEnabled = false;
+                    MainWindow.Instance.Menu_Close.IsEnabled = false;
+                    MainWindow.Instance.Menu_Save.IsEnabled = false;
+                    MainWindow.Instance.Menu_SaveAs.IsEnabled = false;
+                }
+            }
+        }
+
         public static MouseEventArgs MouseEventArgs;
         public static int TileSize;
-        public static List<Tile> Tiles;
+        public static Tile[,] Tiles;
         public static ActionTypes ActionType;
 
         public static SelectorModes SelectorMode;
@@ -75,6 +108,7 @@ namespace XEditor
                 mapSize = value;
                 MainWindow.Instance.EditorGrid.Width = mapSize.X * Global.TileSize;
                 MainWindow.Instance.EditorGrid.Height = mapSize.Y * Global.TileSize;
+                Global.Tiles = new Tile[(int)mapSize.X, (int)mapSize.Y];
                 Global.StatusBarTextLeft = "Updated map size to " + mapSize.X.ToString() + " x "+ mapSize.Y.ToString();
             }
         }
