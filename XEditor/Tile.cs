@@ -4,12 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace XEditor
 {
     public class Tile
     {
+        public Rectangle Rectangle = new Rectangle();
+
         private Point location;
         public Point Location
         {
@@ -21,8 +25,21 @@ namespace XEditor
             }
         }
 
-        public Point TilesetLocation;
-        public Rectangle Rectangle;
+        private Point tilesetLocation;
+        public Point TilesetLocation
+        {
+            get { return tilesetLocation; }
+            set {
+                tilesetLocation = value;
+                CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)tilesetLocation.X * Global.TileSize, (int)tilesetLocation.Y * Global.TileSize, Global.TileSize, Global.TileSize));
+
+                Rectangle.HorizontalAlignment = HorizontalAlignment.Left;
+                Rectangle.VerticalAlignment = VerticalAlignment.Top;
+                Rectangle.Fill = new ImageBrush(cb);
+                Rectangle.Width = Global.TileSize;
+                Rectangle.Height = Global.TileSize;
+            }
+        }
 
         public Tile DeepCopy()
         {

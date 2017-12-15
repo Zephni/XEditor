@@ -1,39 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using StaticCoroutines;
 
 namespace XEditor
 {
     public partial class MainWindow : Window
     {
+        // Properties
         public static MainWindow Instance;
 
+        // Constructor
         public MainWindow()
         {
             Instance = this;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            StaticUpdate.Start(Update);
             Selector.Visibility = Visibility.Hidden;
             Global.TileSize = 16;
             Global.State = States.Initialised;
         }
 
-        public void Update()
+        // MouseUpdates
+        public void MouseUpdates(MouseEventArgs e)
         {
-            Coroutines.Update(1 / 60f);
-            MouseUpdates(Global.MouseEventArgs);
+            if (Global.State == States.MapOpen)
+            {
+                EditorGridMouseUpdates(e);
+                TilesetMouseUpdates(e);
+            }
+        }
+
+        // Methods
+        public void NewMap(Point mapSize, string texturePath)
+        {
+            Global.TexturePath = texturePath;
+            Global.MapSize = mapSize;
+            Global.State = States.MapOpen;
+        }
+
+        public void CloseMap()
+        {
+            for (int x = 0; x < Global.Tiles.GetLength(0); x++)
+                for (int y = 0; y < Global.Tiles.GetLength(1); y++)
+                    RemoveTile(x, y);
+
+            Global.State = States.MapClosed;
+        }
+
+        public void OpenMap(Point mapSize, string texturePath, List<Tile> tiles)
+        {
+            CloseMap();
+            NewMap(mapSize, texturePath);
+
+            foreach (Tile tile in tiles)
+            {
+                tile.Location = tile.Location;
+                tile.TilesetLocation = tile.TilesetLocation;
+            }
+
+            AddTiles(tiles);
         }
 
         public void EditorGridMouseUpdates(MouseEventArgs e)
@@ -85,7 +113,6 @@ namespace XEditor
                     ThisSelector.Width = Width * Global.TileSize + (Global.TileSize + 1);
                     ThisSelector.Height = Height * Global.TileSize + (Global.TileSize + 1);
 
-
                     if (Global.ActionType == ActionTypes.AddingTiles)
                         Global.StatusBarTextRight = "Drawing to area " + LeftMost + ", " + TopMost + " (size " + (Width + 1) + ", " + (Height + 1) + ")";
                     else if (Global.ActionType == ActionTypes.RemovingTiles)
@@ -114,8 +141,7 @@ namespace XEditor
                                 RemoveTile(x, y);
 
                                 // Add new
-                                EditorGrid.Children.Add(tile.Rectangle);
-                                Global.Tiles[x, y] = tile;
+                                AddTile(tile);
                             }
                         }
 
@@ -214,35 +240,47 @@ namespace XEditor
             {
                 for (int y = 0; y < rect.Height; y++)
                 {
-                    CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)(rect.X + x) * 16, (int)(rect.Y + y) * 16, Global.TileSize, Global.TileSize));
-
-                    Tile tile = new Tile
-                    {
-                        Rectangle = new Rectangle
-                        {
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Fill = new ImageBrush(cb),
-                            Width = Global.TileSize,
-                            Height = Global.TileSize
-                        }
-                    };
-
-                    Global.SelectedTiles[x, y] = tile;
+                    Global.SelectedTiles[x, y] = CreateTileObject((int)rect.X + x, (int)rect.Y + y);
                 }
             }
         }
 
-        public void MouseUpdates(MouseEventArgs e)
+        public Tile CreateTileObject(int tilesetPosX, int tilesetPosY)
         {
-            if(Global.State == States.MapOpen)
-            {
-                EditorGridMouseUpdates(e);
-                TilesetMouseUpdates(e);
-            }
+            Tile tile = new Tile {                
+                TilesetLocation = new Point(tilesetPosX, tilesetPosY)
+            };
+
+            return tile;
         }
 
-        // Add / Remove tile
+        public void AddTile(Tile tile)
+        {
+            EditorGrid.Children.Add(tile.Rectangle);
+            Global.Tiles[(int)tile.Location.X, (int)tile.Location.Y] = tile;
+        }
+
+        public void AddTiles(List<Tile> tiles)
+        {
+            foreach (Tile tile in tiles)
+                AddTile(tile);
+        }
+
+        public List<Tile> GetTileList()
+        {
+            List<Tile> tiles = new List<Tile>();
+
+            if(Global.Tiles != null)
+            {
+                for(int x = 0; x < Global.Tiles.GetLength(0); x++)
+                    for (int y = 0; y < Global.Tiles.GetLength(1); y++)
+                        if (Global.Tiles[x, y] != null)
+                            tiles.Add(Global.Tiles[x, y]);
+            }
+
+            return tiles;
+        }
+
         public bool RemoveTile(int x, int y)
         {
             if (Global.Tiles[x, y] == null)
@@ -253,27 +291,20 @@ namespace XEditor
             return true;
         }
 
-        // Open map
-        public void OpenMap(Point mapSize, string texturePath)
+        public void RemoveAllTiles()
         {
-            Global.MapSize = mapSize;
-            Global.TexturePath = texturePath;
-            Global.State = States.MapOpen;
-        }
+            if (Global.Tiles == null)
+                return;
 
-        //  Close map
-        public void CloseMap()
-        {
             for (int x = 0; x < Global.Tiles.GetLength(0); x++)
                 for (int y = 0; y < Global.Tiles.GetLength(1); y++)
                     RemoveTile(x, y);
-
-             Global.State = States.MapClosed;
         }
 
-        private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e;}
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e) { Global.MouseEventArgs = e; }
-        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {Global.MouseEventArgs = e; }
+        // Window events
+        private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e; MouseUpdates(e); }
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) { Global.MouseEventArgs = e; MouseUpdates(e); }
+        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {Global.MouseEventArgs = e; MouseUpdates(e); }
 
         // Menu items
         private void LevelSettings_Click(object sender, RoutedEventArgs e)

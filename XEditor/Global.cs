@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -12,6 +11,7 @@ namespace XEditor
 {
     public enum States
     {
+        Null,
         Initialised,
         MapOpen,
         MapClosed
@@ -36,10 +36,18 @@ namespace XEditor
         {
             get { return state; }
             set {
+                if (state == value)
+                    return;
+                
                 state = value;
 
-                if (state == States.MapOpen)
+                if(state == States.Initialised)
                 {
+                    Global.StatusBarTextLeft = "Initialised";
+                }
+                else if (state == States.MapOpen)
+                {
+                    Global.StatusBarTextLeft = "New map opened";
                     MainWindow.Instance.EditorContainer.Visibility = Visibility.Visible;
                     MainWindow.Instance.Menu_LevelSettings.IsEnabled = true;
                     MainWindow.Instance.Menu_Close.IsEnabled = true;
@@ -48,6 +56,7 @@ namespace XEditor
                 }
                 else
                 {
+                    Global.StatusBarTextLeft = "Map closed";
                     MainWindow.Instance.EditorContainer.Visibility = Visibility.Hidden;
                     MainWindow.Instance.Menu_LevelSettings.IsEnabled = false;
                     MainWindow.Instance.Menu_Close.IsEnabled = false;
