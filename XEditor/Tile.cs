@@ -45,20 +45,20 @@ namespace XEditor
                 
                 Rectangle.HorizontalAlignment = HorizontalAlignment.Left;
                 Rectangle.VerticalAlignment = VerticalAlignment.Top;
-
-                if (Global.Bitmap.Width >= ((int)tilesetLocation.X * Global.TileSize) + Global.TileSize
-                     && Global.Bitmap.Height >= ((int)tilesetLocation.Y * Global.TileSize) + Global.TileSize)
-                {
-                    CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)tilesetLocation.X * Global.TileSize, (int)tilesetLocation.Y * Global.TileSize, Global.TileSize, Global.TileSize));
-                    Rectangle.Fill = new ImageBrush(cb);
-                }
-                else
-                {
-                    Rectangle.Fill = new ImageBrush();
-                }
-
                 Rectangle.Width = Global.TileSize;
                 Rectangle.Height = Global.TileSize;
+
+                if(Global.Bitmap != null)
+                    if (Global.Bitmap.Width >= ((int)tilesetLocation.X * Global.TileSize) + Global.TileSize
+                        && Global.Bitmap.Height >= ((int)tilesetLocation.Y * Global.TileSize) + Global.TileSize)
+                    {
+                        CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)tilesetLocation.X * Global.TileSize, (int)tilesetLocation.Y * Global.TileSize, Global.TileSize, Global.TileSize));
+                        Rectangle.Fill = new ImageBrush(cb);
+                    }
+                    else
+                    {
+                        Rectangle.Fill = new ImageBrush();
+                    }
             }
         }
 

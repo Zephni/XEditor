@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -29,7 +30,6 @@ namespace XEditor
         public void Update()
         {
             MouseUpdates(Global.MouseEventArgs);
-            Global.StatusBarTextRight = string.Join(", ", Global.Layers);
         }
 
         public void MouseUpdates(MouseEventArgs e)
@@ -218,8 +218,12 @@ namespace XEditor
 
         public void CloseMap()
         {
-            for(int i = 0; i < Global.Tiles.Count; i++)
-                RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);                       
+            for (int i = 0; i < Global.Layers.Count; i++)
+                Global.RemoveLayer(i);
+
+            if (Global.Tiles != null)
+                for(int i = 0; i < Global.Tiles.Count; i++)
+                    RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);                       
 
             Global.State = States.MapClosed;
         }
@@ -388,6 +392,30 @@ namespace XEditor
 
             Global.RemoveLayer(current);
             Global.AddLayer(item.ToString(), current);
+        }
+
+        private void File_SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.ShowDialog(this);
+
+            if (sfd.FileName != "")
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.SaveAs(sfd.FileName);
+            }
+        }
+
+        private void File_Open_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog sfd = new OpenFileDialog();
+            sfd.ShowDialog(this);
+
+            if (sfd.FileName != "")
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.Load(sfd.FileName);
+            }
         }
     }
 }

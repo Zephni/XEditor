@@ -21,10 +21,10 @@
             <Menu x:Name="DockMenu" DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_New" Click="File_New_Click" />
-                    <MenuItem Header="_Open"/>
+                    <MenuItem Header="_Open" Click="File_Open_Click" />
                     <MenuItem x:Name="Menu_Close" Header="_Close" Click="File_Close_Click" />
                     <MenuItem x:Name="Menu_Save" Header="_Save"/>
-                    <MenuItem x:Name="Menu_SaveAs" Header="_Save as"/>
+                    <MenuItem x:Name="Menu_SaveAs" Header="_Save as" Click="File_SaveAs_Click" />
                     <MenuItem x:Name="Exit" Header="_Exit"/>
                 </MenuItem>
                 <MenuItem Header="Edit">
