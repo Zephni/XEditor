@@ -11,7 +11,7 @@ namespace XEditor
     {
         // Properties
         public static MainWindow Instance;
-
+        
         // Constructor
         public MainWindow()
         {
@@ -21,9 +21,17 @@ namespace XEditor
             Selector.Visibility = Visibility.Hidden;
             Global.TileSize = 16;
             Global.State = States.Initialised;
+            Global.Layers = new List<string>();
+            new Updater().Start(17, Update);
         }
 
-        // MouseUpdates
+        // Updates
+        public void Update()
+        {
+            MouseUpdates(Global.MouseEventArgs);
+            Global.StatusBarTextRight = string.Join(", ", Global.Layers);
+        }
+
         public void MouseUpdates(MouseEventArgs e)
         {
             if (Global.State == States.MapOpen)
@@ -31,37 +39,6 @@ namespace XEditor
                 EditorGridMouseUpdates(e);
                 TilesetMouseUpdates(e);
             }
-        }
-
-        // Methods
-        public void NewMap(Point mapSize, string texturePath)
-        {
-            Global.TexturePath = texturePath;
-            Global.MapSize = mapSize;
-            Global.State = States.MapOpen;
-        }
-
-        public void CloseMap()
-        {
-            for (int x = 0; x < Global.Tiles.GetLength(0); x++)
-                for (int y = 0; y < Global.Tiles.GetLength(1); y++)
-                    RemoveTile(x, y);
-
-            Global.State = States.MapClosed;
-        }
-
-        public void OpenMap(Point mapSize, string texturePath, List<Tile> tiles)
-        {
-            CloseMap();
-            NewMap(mapSize, texturePath);
-
-            foreach (Tile tile in tiles)
-            {
-                tile.Location = tile.Location;
-                tile.TilesetLocation = tile.TilesetLocation;
-            }
-
-            AddTiles(tiles);
         }
 
         public void EditorGridMouseUpdates(MouseEventArgs e)
@@ -73,11 +50,14 @@ namespace XEditor
                 ThisSelector.Stroke = new SolidColorBrush(Colors.Black);
 
                 ThisSelector.Visibility = Visibility.Visible;
-                Global.SelectorIndex = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
+                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
 
                 if (Global.SelectorMode == SelectorModes.Normal)
                 {
                     Global.StatusBarTextRight = Global.SelectorIndex.ToString();
+
+                    if (Global.GetTile(Global.SelectorIndex, Global.TileLayer) != null)
+                        Global.StatusBarTextRight += " (tile "+ Global.GetTile(Global.SelectorIndex, Global.TileLayer).TilesetLocation.ToString() + ")";
 
                     ThisSelector.Margin = new Thickness(Global.SelectorIndex.X * Global.TileSize, Global.SelectorIndex.Y * Global.TileSize, 0, 0);
                     ThisSelector.Width = Global.TileSize + 1;
@@ -138,7 +118,7 @@ namespace XEditor
                                 tile.Location = new Point(x, y);
 
                                 // Remove old if exists
-                                RemoveTile(x, y);
+                                RemoveTile(x, y, Global.TileLayer);
 
                                 // Add new
                                 AddTile(tile);
@@ -157,7 +137,7 @@ namespace XEditor
                         {
                             for (int Y = TopMost; Y <= TopMost + Height; Y++)
                             {
-                                if(RemoveTile(X, Y))
+                                if (RemoveTile(X, Y, Global.TileLayer))
                                     tileCount++;
                             }
                         }
@@ -203,11 +183,6 @@ namespace XEditor
                     int Width = (int)Math.Abs(Global.TileSelectorHoldIndex.X - Global.TileSelectorIndex.X) + 1;
                     int Height = (int)Math.Abs(Global.TileSelectorHoldIndex.Y - Global.TileSelectorIndex.Y) + 1;
 
-                    if (TopMost + Height > Math.Floor(Global.Bitmap.Height / Global.TileSize))
-                        Height--;
-                    if (LeftMost + Width > Math.Floor(Global.Bitmap.Width / Global.TileSize))
-                        Width--;
-
                     ThisSelector.Margin = new Thickness(LeftMost * Global.TileSize, TopMost * Global.TileSize, 0, 0);
                     ThisSelector.Width = Width * Global.TileSize;
                     ThisSelector.Height = Height * Global.TileSize;
@@ -224,6 +199,44 @@ namespace XEditor
             {
                 ThisSelector.Visibility = Visibility.Hidden;
             }
+        }
+
+        // Methods
+        public void NewMap(Point mapSize, string texturePath, List<string> layers)
+        {
+            for (int i = 0; i < Global.Layers.Count; i++)
+                Global.RemoveLayer(i);
+
+            foreach(string layer in layers)
+                Global.AddLayer(layer);
+            Global.TileLayer = 1;
+            
+            Global.TexturePath = texturePath;
+            Global.MapSize = mapSize;
+            Global.State = States.MapOpen;
+        }
+
+        public void CloseMap()
+        {
+            for(int i = 0; i < Global.Tiles.Count; i++)
+                RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);                       
+
+            Global.State = States.MapClosed;
+        }
+
+        public void OpenMap(Point mapSize, string texturePath, List<string> layers, List<Tile> tiles)
+        {
+            CloseMap();
+            NewMap(mapSize, texturePath, layers);
+
+            foreach (Tile tile in tiles)
+            {
+                tile.Location = tile.Location;
+                tile.Layer = tile.Layer;
+                tile.TilesetLocation = tile.TilesetLocation;
+            }
+
+            AddTiles(tiles);
         }
 
         public void TilesetSelectArea(Rect rect)
@@ -256,8 +269,12 @@ namespace XEditor
 
         public void AddTile(Tile tile)
         {
+            if (Global.GetTile(tile.Location.X, tile.Location.Y, tile.Layer) != null)
+                RemoveTile(tile.Location.X, tile.Location.Y, tile.Layer);
+
+            tile.Layer = Global.TileLayer;
             EditorGrid.Children.Add(tile.Rectangle);
-            Global.Tiles[(int)tile.Location.X, (int)tile.Location.Y] = tile;
+            Global.Tiles.Add(tile);
         }
 
         public void AddTiles(List<Tile> tiles)
@@ -272,22 +289,22 @@ namespace XEditor
 
             if(Global.Tiles != null)
             {
-                for(int x = 0; x < Global.Tiles.GetLength(0); x++)
-                    for (int y = 0; y < Global.Tiles.GetLength(1); y++)
-                        if (Global.Tiles[x, y] != null)
-                            tiles.Add(Global.Tiles[x, y]);
+                for(int i = 0; i < Global.Tiles.Count; i++)
+                    tiles.Add(Global.GetTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer));
             }
 
             return tiles;
         }
 
-        public bool RemoveTile(int x, int y)
+        public bool RemoveTile(int x, int y, int layer)
         {
-            if (Global.Tiles[x, y] == null)
+            Tile tile = Global.GetTile(x, y, layer);
+
+            if (tile == null)
                 return false;
 
-            EditorGrid.Children.Remove(Global.Tiles[x, y].Rectangle);
-            Global.Tiles[x, y] = null;
+            EditorGrid.Children.Remove(tile.Rectangle);
+            Global.Tiles.Remove(tile);
             return true;
         }
 
@@ -296,15 +313,16 @@ namespace XEditor
             if (Global.Tiles == null)
                 return;
 
-            for (int x = 0; x < Global.Tiles.GetLength(0); x++)
-                for (int y = 0; y < Global.Tiles.GetLength(1); y++)
-                    RemoveTile(x, y);
+            for(int i = 0; i < Global.Tiles.Count; i++)
+                RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);
         }
 
         // Window events
-        private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e; MouseUpdates(e); }
-        private void Window_MouseDown(object sender, MouseButtonEventArgs e) { Global.MouseEventArgs = e; MouseUpdates(e); }
-        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {Global.MouseEventArgs = e; MouseUpdates(e); }
+        private void Window_MouseMove(object sender, MouseEventArgs e){Global.MouseEventArgs = e; }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) { Global.MouseEventArgs = e; }
+
+        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {Global.MouseEventArgs = e; }
 
         // Menu items
         private void LevelSettings_Click(object sender, RoutedEventArgs e)
@@ -322,6 +340,22 @@ namespace XEditor
         private void File_Close_Click(object sender, RoutedEventArgs e)
         {
             CloseMap();
+        }
+
+        private void TileLayerComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            Global.TileLayer = TileLayerComboBox.SelectedIndex;
+        }
+
+        private void AddLayer_Click(object sender, RoutedEventArgs e)
+        {
+            AddLayer addLayer = new AddLayer();
+            addLayer.ShowDialog();
+        }
+
+        private void RemoveLayer_Click(object sender, RoutedEventArgs e)
+        {
+            Global.RemoveLayer(MainWindow.Instance.TileLayerComboBox.SelectedIndex);
         }
     }
 }

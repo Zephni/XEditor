@@ -32,3 +32,5 @@ C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEngine.g.resources
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEngine.Properties.Resources.resources
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEditor.csproj.GenerateResource.Cache
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\AddLayer.g.cs
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\AddLayer.baml

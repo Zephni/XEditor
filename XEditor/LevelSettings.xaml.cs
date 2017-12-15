@@ -34,12 +34,12 @@ namespace XEditor
         {
             if(Global.State != States.MapOpen)
             {
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text);
+                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text, new List<string> { "Background", "Main", "Foreground" });
             }
             else
             {
                 List<Tile> newTiles = MainWindow.Instance.GetTileList();
-                MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text, newTiles);
+                MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text, new List<string> { "Background", "Main", "Foreground" }, newTiles);
             }
 
             this.Close();

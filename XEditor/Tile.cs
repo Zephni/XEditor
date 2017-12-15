@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -13,6 +14,16 @@ namespace XEditor
     public class Tile
     {
         public Rectangle Rectangle = new Rectangle();
+
+        private int layer;
+        public int Layer
+        {
+            get { return layer; }
+            set {
+                layer = value;
+                Rectangle.SetValue(Panel.ZIndexProperty, layer);
+            }
+        }
 
         private Point location;
         public Point Location
@@ -31,11 +42,21 @@ namespace XEditor
             get { return tilesetLocation; }
             set {
                 tilesetLocation = value;
-                CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)tilesetLocation.X * Global.TileSize, (int)tilesetLocation.Y * Global.TileSize, Global.TileSize, Global.TileSize));
-
+                
                 Rectangle.HorizontalAlignment = HorizontalAlignment.Left;
                 Rectangle.VerticalAlignment = VerticalAlignment.Top;
-                Rectangle.Fill = new ImageBrush(cb);
+
+                if (Global.Bitmap.Width >= ((int)tilesetLocation.X * Global.TileSize) + Global.TileSize
+                     && Global.Bitmap.Height >= ((int)tilesetLocation.Y * Global.TileSize) + Global.TileSize)
+                {
+                    CroppedBitmap cb = new CroppedBitmap(Global.Bitmap, new Int32Rect((int)tilesetLocation.X * Global.TileSize, (int)tilesetLocation.Y * Global.TileSize, Global.TileSize, Global.TileSize));
+                    Rectangle.Fill = new ImageBrush(cb);
+                }
+                else
+                {
+                    Rectangle.Fill = new ImageBrush();
+                }
+
                 Rectangle.Width = Global.TileSize;
                 Rectangle.Height = Global.TileSize;
             }

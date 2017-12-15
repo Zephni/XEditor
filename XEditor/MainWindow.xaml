@@ -41,6 +41,19 @@
 
                 <Grid Grid.Column="0" Background="LightGray">
                     <StackPanel>
+                        <Label Margin="0,8,0,0">Tile layer</Label>
+                        <ComboBox x:Name="TileLayerComboBox" Margin="12,6,12,12" SelectionChanged="TileLayerComboBox_SelectionChanged" />
+
+                        <Grid Margin="12,6,12,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Button Click="AddLayer_Click" Grid.Column="1" Margin="4,0,4,0">Add layer</Button>
+                            <Button Click="RemoveLayer_Click" Grid.Column="2" Margin="4,0,0,0">Remove layer</Button>
+                        </Grid>
+
                         <Label Margin="0,8,0,0">Tileset</Label>
                         <ScrollViewer Background="Gray" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Height="260" Margin="12,6,12,12">
                             <Grid x:Name="TilesetGrid" Background="White">
@@ -52,9 +65,9 @@
                 </Grid>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
                 <ScrollViewer x:Name="EditorScroller" Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
-                    <Grid Name="EditorGrid" Background="{StaticResource GridBrush}">
+                    <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}">
                         <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                    </Grid>
+                    </Canvas>
                 </ScrollViewer>
             </Grid>
         </DockPanel>

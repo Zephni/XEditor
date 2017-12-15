@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -68,8 +66,22 @@ namespace XEditor
 
         public static MouseEventArgs MouseEventArgs;
         public static int TileSize;
-        public static Tile[,] Tiles;
+        public static List<Tile> Tiles;
         public static ActionTypes ActionType;
+
+        private static int tileLayer;
+        public static int TileLayer
+        {
+            get { return tileLayer; }
+            set {
+                tileLayer = value;
+
+                if (MainWindow.Instance.TileLayerComboBox.SelectedIndex != tileLayer)
+                    MainWindow.Instance.TileLayerComboBox.SelectedIndex = tileLayer;
+            }
+        }
+
+        public static List<string> Layers;
 
         public static SelectorModes SelectorMode;
         public static Point SelectorIndex;
@@ -117,7 +129,7 @@ namespace XEditor
                 mapSize = value;
                 MainWindow.Instance.EditorGrid.Width = mapSize.X * Global.TileSize;
                 MainWindow.Instance.EditorGrid.Height = mapSize.Y * Global.TileSize;
-                Global.Tiles = new Tile[(int)mapSize.X, (int)mapSize.Y];
+                Global.Tiles = new List<Tile>();
                 Global.StatusBarTextLeft = "Updated map size to " + mapSize.X.ToString() + " x "+ mapSize.Y.ToString();
             }
         }
@@ -128,6 +140,58 @@ namespace XEditor
                 return 0;
 
             return (((x - x_min) % (x_max - x_min)) + (x_max - x_min)) % (x_max - x_min) + x_min;
+        }
+
+        public static bool AddLayer(string alias, int? insertIndex = null)
+        {
+            if (alias.Length == 0)
+            {
+                MessageBox.Show("Layer must have a name");
+                return false;
+            }
+
+            if (Global.Layers.Contains(alias))
+            {
+                MessageBox.Show("A layer with this name already exists");
+                return false;
+            }
+
+            if (insertIndex == null)
+                insertIndex = MainWindow.Instance.TileLayerComboBox.Items.Count-1;
+
+            Global.Layers.Insert((int)insertIndex+1, alias);
+            MainWindow.Instance.TileLayerComboBox.Items.Insert((int)insertIndex+1, alias);
+            Global.TileLayer = (int)insertIndex+1;
+
+            return true;
+        }
+
+        public static void RemoveLayer(string alias)
+        {
+            Global.RemoveLayer(MainWindow.Instance.TileLayerComboBox.Items.IndexOf(alias));
+        }
+
+        public static void RemoveLayer(int index)
+        {
+            if (Global.Layers.Count == 1)
+            {
+                MessageBox.Show("There must be at least one layer");
+                return;
+            }
+
+            Global.Layers.RemoveAt(index);
+            MainWindow.Instance.TileLayerComboBox.Items.RemoveAt(index);
+            Global.TileLayer = index;
+        }
+
+        public static Tile GetTile(int x, int y, int z)
+        {
+            return Global.Tiles.Find(t => t.Location.X == x && t.Location.Y == y && t.Layer == z);
+        }
+
+        public static Tile GetTile(Point location, int z)
+        {
+            return Global.GetTile(location.X, location.Y, z);
         }
     }
 }
