@@ -357,5 +357,37 @@ namespace XEditor
         {
             Global.RemoveLayer(MainWindow.Instance.TileLayerComboBox.SelectedIndex);
         }
+
+        private void MoveLayerUp_Click(object sender, RoutedEventArgs e)
+        {
+            int current = Global.TileLayer;
+
+            if(current == 0)
+            {
+                MessageBox.Show("Cannot move layer any lower");
+                return;
+            }
+
+            var item = TileLayerComboBox.Items[current];
+
+            Global.RemoveLayer(current);
+            Global.AddLayer(item.ToString(), current-2);
+        }
+
+        private void MoveLayerDown_Click(object sender, RoutedEventArgs e)
+        {
+            int current = Global.TileLayer;
+
+            if (current >= Global.Layers.Count-1)
+            {
+                MessageBox.Show("Cannot move layer any higher");
+                return;
+            }
+
+            var item = TileLayerComboBox.Items[current];
+
+            Global.RemoveLayer(current);
+            Global.AddLayer(item.ToString(), current);
+        }
     }
 }

@@ -23,7 +23,7 @@
 
         <TextBox x:Name="LayerName" Grid.Column="0" Grid.Row="1" Margin="4,4,4,4"></TextBox>
         <ComboBox x:Name="LayerIndexes" Grid.Column="1" Grid.Row="1" Margin="4,4,4,4"></ComboBox>
-        <Button Content="Create layer" Grid.Column="2" Grid.Row="1"  Margin="4,4,4,4" Click="Create_Click" />
+        <Button Content="Create layer" Grid.Column="2" Grid.Row="1"  Margin="4,4,4,4" Click="Create_Click" IsDefault="True" />
 
     </Grid>
 </Window>

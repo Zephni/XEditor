@@ -33,7 +33,7 @@
                 <TextBox Grid.Column="1" x:Name="TilesetPath" FontSize="16"/>
                 <Button Grid.Column="2" Content="Browse" Margin="16,0,0,0" Click="Browse_Tileset"  />
             </Grid>
-            <Button x:Name="ApplyButton" Margin="16,16,24,0" Padding="0,4,0,4" Content="Apply" Click="Apply_Click" />
+            <Button x:Name="ApplyButton" Margin="16,16,24,0" Padding="0,4,0,4" Content="Apply" Click="Apply_Click" IsDefault="True" />
         </StackPanel>
     </Grid>
 </Window>
