@@ -205,10 +205,9 @@ namespace XEditor
         // Methods
         public void NewMap(Point mapSize, string texturePath, List<string> layers)
         {
-            for (int i = 0; i < Global.Layers.Count; i++)
-                Global.RemoveLayer(i);
+            Global.ResetLayers();
 
-            foreach(string layer in layers)
+            foreach (string layer in layers)
                 Global.AddLayer(layer);
             Global.TileLayer = 1;
             
@@ -219,12 +218,9 @@ namespace XEditor
 
         public void CloseMap()
         {
-            for (int i = 0; i < Global.Layers.Count; i++)
-                Global.RemoveLayer(i);
+            RemoveAllTiles();
 
-            if (Global.Tiles != null)
-                for(int i = 0; i < Global.Tiles.Count; i++)
-                    RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);                       
+            Global.ResetLayers();
 
             Global.State = States.MapClosed;
         }
@@ -301,16 +297,21 @@ namespace XEditor
             return tiles;
         }
 
-        public bool RemoveTile(int x, int y, int layer)
+        public bool RemoveTile(Tile tile)
         {
-            Tile tile = Global.GetTile(x, y, layer);
-
             if (tile == null)
                 return false;
 
+            EditorGrid.Children.RemoveAt(Global.Tiles.IndexOf(tile) + 1);
             EditorGrid.Children.Remove(tile.Rectangle);
             Global.Tiles.Remove(tile);
             return true;
+        }
+
+        public bool RemoveTile(int x, int y, int layer)
+        {
+            Tile tile = Global.GetTile(x, y, layer);
+            return RemoveTile(tile);
         }
 
         public void RemoveAllTiles()
@@ -319,7 +320,11 @@ namespace XEditor
                 return;
 
             for(int i = 0; i < Global.Tiles.Count; i++)
-                RemoveTile(Global.Tiles[i].Location.X, Global.Tiles[i].Location.Y, Global.Tiles[i].Layer);
+                RemoveTile(Global.Tiles[i]);
+
+            EditorGrid.Children.RemoveRange(1, EditorGrid.Children.Count - 1);
+
+            Global.Tiles = new List<Tile>();
         }
 
         // Window events

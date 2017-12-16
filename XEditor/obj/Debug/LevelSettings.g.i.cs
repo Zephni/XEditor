@@ -84,7 +84,7 @@ namespace XEditor {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/XEngine;component/levelsettings.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/XEditor;component/levelsettings.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\LevelSettings.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

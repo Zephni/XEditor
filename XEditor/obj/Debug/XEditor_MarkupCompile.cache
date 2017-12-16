@@ -1,20 +1,20 @@
-﻿XEngine
+﻿XEditor
 
 
 winexe
 C#
 .cs
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\
-XEngine
+XEditor
 none
 false
 DEBUG;TRACE
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\App.xaml
-3-229221782
+31324963539
 
-12-2113969634
+121374674907
 14-1787462521
-AddLayer.xaml;LevelSettings.xaml;MainWindow.xaml;
+Windows\AddLayer.xaml;Windows\LevelSettings.xaml;Windows\MainWindow.xaml;
 
 False
 

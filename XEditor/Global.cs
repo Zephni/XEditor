@@ -183,7 +183,13 @@ namespace XEditor
 
             Global.Layers.RemoveAt(index);
             MainWindow.Instance.TileLayerComboBox.Items.RemoveAt(index);
-            Global.TileLayer = index;
+            Global.TileLayer = (index >= 1) ? index-1 : 0;
+        }
+
+        public static void ResetLayers()
+        {
+            Global.Layers = new List<string>();
+            MainWindow.Instance.TileLayerComboBox.Items.Clear();
         }
 
         public static Tile GetTile(int x, int y, int z)
