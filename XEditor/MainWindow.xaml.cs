@@ -116,6 +116,7 @@ namespace XEditor
                                 int Y = Global.WrapValue(y - TopMost, 0, Global.SelectedTiles.GetLength(1));
                                 Tile tile = Global.SelectedTiles[X, Y].DeepCopy();
                                 tile.Location = new Point(x, y);
+                                tile.Layer = Global.TileLayer;
 
                                 // Remove old if exists
                                 RemoveTile(x, y, Global.TileLayer);
@@ -276,7 +277,7 @@ namespace XEditor
             if (Global.GetTile(tile.Location.X, tile.Location.Y, tile.Layer) != null)
                 RemoveTile(tile.Location.X, tile.Location.Y, tile.Layer);
 
-            tile.Layer = Global.TileLayer;
+            tile.Layer = tile.Layer;
             EditorGrid.Children.Add(tile.Rectangle);
             Global.Tiles.Add(tile);
         }
@@ -415,6 +416,20 @@ namespace XEditor
             {
                 SaverLoader sl = new SaverLoader();
                 sl.Load(sfd.FileName);
+                Global.OpenFilePath = sfd.FileName;
+            }
+        }
+
+        private void File_Save_Click(object sender, RoutedEventArgs e)
+        {
+            if(Global.OpenFilePath.Length > 0)
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.SaveAs(Global.OpenFilePath);
+            }
+            else
+            {
+                File_SaveAs_Click(sender, e);
             }
         }
     }

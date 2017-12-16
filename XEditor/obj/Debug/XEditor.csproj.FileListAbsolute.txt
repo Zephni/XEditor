@@ -4,7 +4,6 @@ C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\bin\Debug\XEngine.exe.config
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\bin\Debug\XEngine.exe
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\bin\Debug\XEngine.pdb
-C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\bin\Debug\StaticCoroutines.pdb
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\XEditor.csprojResolveAssemblyReference.cache
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\LevelSettings.g.cs
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\MainWindow.g.cs
@@ -34,3 +33,5 @@ C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEditor.csproj.GenerateResource.Cache
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\AddLayer.g.cs
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\AddLayer.baml
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\AddLayer.g.cs
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\AddLayer.baml

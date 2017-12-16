@@ -64,6 +64,8 @@ namespace XEditor
             }
         }
 
+        public static string OpenFilePath;
+
         public static MouseEventArgs MouseEventArgs;
         public static int TileSize;
         public static List<Tile> Tiles;
