@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -64,6 +66,26 @@ namespace XEditor
             }
         }
 
+        private static bool unSaved = false;
+        public static bool Unsaved
+        {
+            get { return unSaved; }
+            set {
+                unSaved = value;
+
+                if (unSaved)
+                {
+                    if (MainWindow.Instance.Title[MainWindow.Instance.Title.Length - 1] != '*')
+                        MainWindow.Instance.Title = MainWindow.Instance.Title + " *";
+                }
+                else
+                {
+                    if (MainWindow.Instance.Title[MainWindow.Instance.Title.Length - 1] == '*')
+                        MainWindow.Instance.Title = MainWindow.Instance.Title.Substring(0, MainWindow.Instance.Title.Length - 2);
+                }
+            }
+        }
+
         public static string OpenFilePath;
 
         public static MouseEventArgs MouseEventArgs;
@@ -76,6 +98,7 @@ namespace XEditor
         {
             get { return tileLayer; }
             set {
+                Global.Unsaved = true;
                 tileLayer = value;
 
                 if (MainWindow.Instance.TileLayerComboBox.SelectedIndex != tileLayer)
@@ -113,6 +136,7 @@ namespace XEditor
             get { return texturePath; }
             set {
                 texturePath = value;
+                Global.Unsaved = true;
 
                 Bitmap = new BitmapImage(new Uri(texturePath));
                 MainWindow.Instance.TilesetGrid.Background = new ImageBrush(Bitmap);
@@ -200,6 +224,124 @@ namespace XEditor
         public static Tile GetTile(Point location, int z)
         {
             return Global.GetTile(location.X, location.Y, z);
+        }
+
+        // RunOnEventLoop
+        public static List<string> ConditionTracker = new List<string>();
+        public static void RunOnEventLoop(string key, bool condition, Action action)
+        {
+            if (condition && !ConditionTracker.Contains(key))
+            {
+                ConditionTracker.Add(key);
+                action();
+            }
+            
+            if(!condition && ConditionTracker.Contains(key))
+                ConditionTracker.Remove(key);
+        }
+
+        // KeyCombo
+        public static bool KeyComboDown(params Key[] keys)
+        {
+            foreach (Key key in keys)
+                if (!Keyboard.IsKeyDown(key))
+                    return false;
+
+            return true;
+        }
+
+        // Commands
+        private static bool DialogWindowOpen = false;
+        public static void Command_New()
+        {
+            if (DialogWindowOpen)
+                return;
+
+            DialogWindowOpen = true;
+            LevelSettings ls = new LevelSettings();
+            ls.ShowDialog();
+            DialogWindowOpen = false;
+        }
+        
+        public static void Command_Open()
+        {
+            if (DialogWindowOpen)
+                return;
+
+            DialogWindowOpen = true;
+            OpenFileDialog sfd = new OpenFileDialog();
+            sfd.ShowDialog(MainWindow.Instance);
+
+            if (sfd.FileName != "")
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.Load(sfd.FileName);
+                Global.OpenFilePath = sfd.FileName;
+            }
+            Global.Unsaved = false;
+            DialogWindowOpen = false;
+        }
+
+        public static void Command_Close()
+        {
+            if (Global.Unsaved)
+            {
+                MessageBoxResult rsltMessageBox = MessageBox.Show("Would you like to save before closing?", "Do you want to save?", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (rsltMessageBox)
+                {
+                    case MessageBoxResult.Yes:
+                        Global.Command_Save();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+            }
+
+            MainWindow.Instance.CloseMap();
+        }
+        
+        public static void Command_Save()
+        {
+            if (DialogWindowOpen)
+                return;
+
+            DialogWindowOpen = true;
+            if (Global.OpenFilePath != null && Global.OpenFilePath.Length > 0)
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.SaveAs(Global.OpenFilePath);
+                Global.Unsaved = false;
+            }
+            else
+            {
+                Command_SaveAs();
+            }
+            DialogWindowOpen = false;
+        }
+
+        public static void Command_SaveAs()
+        {
+            if (DialogWindowOpen)
+                return;
+
+            DialogWindowOpen = true;
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.ShowDialog(MainWindow.Instance);
+
+            if (sfd.FileName != "")
+            {
+                SaverLoader sl = new SaverLoader();
+                sl.SaveAs(sfd.FileName);
+                Global.Unsaved = false;
+            }
+
+            DialogWindowOpen = false;
+        }
+
+        public static void Command_Exit()
+        {
+            MainWindow.Instance.Close();
         }
     }
 }

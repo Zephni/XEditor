@@ -30,6 +30,18 @@ namespace XEditor
         public void Update()
         {
             MouseUpdates(Global.MouseEventArgs);
+
+            Global.RunOnEventLoop("Ctrl+N", Global.KeyComboDown(Key.LeftCtrl, Key.N), () => {
+                Global.Command_New();
+            });
+
+            Global.RunOnEventLoop("Ctrl+S", Global.KeyComboDown(Key.LeftCtrl, Key.S), () => {
+                Global.Command_Save();
+            });
+
+            Global.RunOnEventLoop("Ctrl+O", Global.KeyComboDown(Key.LeftCtrl, Key.O), () => {
+                Global.Command_Open();
+            });
         }
 
         public void MouseUpdates(MouseEventArgs e)
@@ -205,6 +217,7 @@ namespace XEditor
         // Methods
         public void NewMap(Point mapSize, string texturePath, List<string> layers)
         {
+            Global.Unsaved = true;
             Global.ResetLayers();
 
             foreach (string layer in layers)
@@ -219,9 +232,7 @@ namespace XEditor
         public void CloseMap()
         {
             RemoveAllTiles();
-
             Global.ResetLayers();
-
             Global.State = States.MapClosed;
         }
 
@@ -270,6 +281,8 @@ namespace XEditor
 
         public void AddTile(Tile tile)
         {
+            Global.Unsaved = true;
+
             if (Global.GetTile(tile.Location.X, tile.Location.Y, tile.Layer) != null)
                 RemoveTile(tile.Location.X, tile.Location.Y, tile.Layer);
 
@@ -299,6 +312,7 @@ namespace XEditor
 
         public bool RemoveTile(Tile tile)
         {
+            Global.Unsaved = true;
             if (tile == null)
                 return false;
 
@@ -339,17 +353,6 @@ namespace XEditor
         {
             LevelSettings ls = new LevelSettings();
             ls.ShowDialog();
-        }
-
-        private void File_New_Click(object sender, RoutedEventArgs e)
-        {
-            LevelSettings ls = new LevelSettings();
-            ls.ShowDialog();
-        }
-
-        private void File_Close_Click(object sender, RoutedEventArgs e)
-        {
-            CloseMap();
         }
 
         private void TileLayerComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -400,41 +403,50 @@ namespace XEditor
             Global.AddLayer(item.ToString(), current);
         }
 
-        private void File_SaveAs_Click(object sender, RoutedEventArgs e)
+        private void File_New_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.ShowDialog(this);
+            Global.Command_New();
+        }
 
-            if (sfd.FileName != "")
-            {
-                SaverLoader sl = new SaverLoader();
-                sl.SaveAs(sfd.FileName);
-            }
+        private void File_Close_Click(object sender, RoutedEventArgs e)
+        {
+            Global.Command_Close();
         }
 
         private void File_Open_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog sfd = new OpenFileDialog();
-            sfd.ShowDialog(this);
-
-            if (sfd.FileName != "")
-            {
-                SaverLoader sl = new SaverLoader();
-                sl.Load(sfd.FileName);
-                Global.OpenFilePath = sfd.FileName;
-            }
+            Global.Command_Open();
         }
 
         private void File_Save_Click(object sender, RoutedEventArgs e)
         {
-            if(Global.OpenFilePath.Length > 0)
+            Global.Command_Save();
+        }
+
+        private void File_SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            Global.Command_SaveAs();
+        }
+
+        private void File_Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Global.Command_Exit();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if(Global.Unsaved)
             {
-                SaverLoader sl = new SaverLoader();
-                sl.SaveAs(Global.OpenFilePath);
-            }
-            else
-            {
-                File_SaveAs_Click(sender, e);
+                MessageBoxResult rsltMessageBox = MessageBox.Show("Would you like to save before quiting?", "Do you want to save?", MessageBoxButton.YesNoCancel, MessageBoxImage.Warning);
+                switch (rsltMessageBox)
+                {
+                    case MessageBoxResult.Yes:
+                        Global.Command_Save();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                }
             }
         }
     }
