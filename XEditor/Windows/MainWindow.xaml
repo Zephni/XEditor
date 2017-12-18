@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="XEditor" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" Closing="Window_Closing">
     <Window.Resources>
+        <local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
         <VisualBrush x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
             <VisualBrush.Visual>
                 <Grid Background="White">
@@ -50,6 +51,13 @@
                     </Grid.Resources>
                     
                     <StackPanel>
+                        <Label Margin="0,8,0,0">Tool</Label>
+                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                            <RadioButton x:Name="RadioButton_TilePlacer" Margin="0,5,15,5" Checked="ToolSwitcher_Checked">Tile placer</RadioButton>
+                            <RadioButton x:Name="RadioButton_TileSelector" Margin="0,5,15,5" Checked="ToolSwitcher_Checked">Tile selector</RadioButton>
+                            <RadioButton x:Name="RadioButton_Entities" Margin="0,5,15,5" Checked="ToolSwitcher_Checked">Entities</RadioButton>
+                        </StackPanel>
+
                         <Label Margin="0,8,0,0">Tile layer</Label>
                         <ComboBox x:Name="TileLayerComboBox" Margin="12,6,12,6" SelectionChanged="TileLayerComboBox_SelectionChanged" FontSize="16" />
 

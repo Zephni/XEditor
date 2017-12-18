@@ -18,6 +18,14 @@ namespace XEditor
         MapClosed
     }
 
+    public enum ToolTypes
+    {
+        Null,
+        TilePlacer,
+        TileSelector,
+        Entities
+    }
+
     public enum SelectorModes
     {
         Normal,
@@ -71,6 +79,25 @@ namespace XEditor
                     MainWindow.Instance.Menu_Save.IsEnabled = false;
                     MainWindow.Instance.Menu_SaveAs.IsEnabled = false;
                 }
+            }
+        }
+
+        private static ToolTypes toolType;
+        public static ToolTypes ToolType
+        {
+            get { return toolType; }
+            set {
+                if (toolType == value)
+                    return;
+
+                toolType = value;
+
+                if (toolType == ToolTypes.TilePlacer)
+                    MainWindow.Instance.RadioButton_TilePlacer.IsChecked = true;
+                else if (toolType == ToolTypes.TileSelector)
+                    MainWindow.Instance.RadioButton_TileSelector.IsChecked = true;
+                else if(toolType == ToolTypes.Entities)
+                    MainWindow.Instance.RadioButton_Entities.IsChecked = true;
             }
         }
 

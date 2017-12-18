@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,7 +13,7 @@ namespace XEditor
     {
         // Properties
         public static MainWindow Instance;
-        
+
         // Constructor
         public MainWindow()
         {
@@ -48,12 +49,16 @@ namespace XEditor
         {
             if (Global.State == States.MapOpen)
             {
-                EditorGridMouseUpdates(e);
-                TilesetMouseUpdates(e);
+                if(Global.ToolType == ToolTypes.TilePlacer)
+                {
+                    TilePlacer_EditorGrid_MouseUpdates(e);
+                    TilePlacer_Tileset_MouseUpdates(e);
+                }
             }
         }
 
-        public void EditorGridMouseUpdates(MouseEventArgs e)
+        // TilePlacer updates
+        public void TilePlacer_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
             Rectangle ThisSelector = Selector;
 
@@ -164,8 +169,7 @@ namespace XEditor
                 ThisSelector.Visibility = Visibility.Hidden;
             }
         }
-
-        public void TilesetMouseUpdates(MouseEventArgs e)
+        public void TilePlacer_Tileset_MouseUpdates(MouseEventArgs e)
         {
             Rectangle ThisSelector = TilesetSelector;
             ThisSelector.Stroke = new SolidColorBrush(Colors.White);
@@ -214,6 +218,11 @@ namespace XEditor
             }
         }
 
+        // TileSelector updates
+
+        // Entities updates
+
+
         // Methods
         public void NewMap(Point mapSize, string texturePath, List<string> layers)
         {
@@ -227,6 +236,7 @@ namespace XEditor
             Global.TexturePath = texturePath;
             Global.MapSize = mapSize;
             Global.State = States.MapOpen;
+            Global.ToolType = ToolTypes.TilePlacer;
         }
 
         public void CloseMap()
@@ -235,6 +245,7 @@ namespace XEditor
             Global.ResetLayers();
             Global.State = States.MapClosed;
             Global.Unsaved = false;
+            Global.ToolType = ToolTypes.Null;
         }
 
         public void OpenMap(Point mapSize, string texturePath, List<string> layers, List<Tile> tiles)
@@ -250,6 +261,7 @@ namespace XEditor
             }
 
             AddTiles(tiles);
+            Global.ToolType = ToolTypes.TilePlacer;
         }
 
         public void TilesetSelectArea(Rect rect)
@@ -449,6 +461,24 @@ namespace XEditor
                         break;
                 }
             }
+        }
+
+        private void ToolSwitcher_Checked(object sender, RoutedEventArgs e)
+        {
+            var radioButton = sender as RadioButton;
+            ToolTypes toolType = ToolTypes.Null;
+
+            if(radioButton != null)
+            {
+                if (radioButton.Content.ToString() == "Tile placer")
+                    toolType = ToolTypes.TilePlacer;
+                else if (radioButton.Content.ToString() == "Tile selector")
+                    toolType = ToolTypes.TileSelector;
+                else if (radioButton.Content.ToString() == "Entities")
+                    toolType = ToolTypes.Entities;
+            }
+            
+            Global.ToolType = toolType;
         }
     }
 }

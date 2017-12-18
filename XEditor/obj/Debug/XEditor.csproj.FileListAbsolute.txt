@@ -35,3 +35,4 @@ C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\Windows\MainWindow.baml
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEditor.g.resources
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\XEditor.Properties.Resources.resources
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\GeneratedInternalTypeHelper.g.cs

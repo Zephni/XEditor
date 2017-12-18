@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\
+C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Release\
 XEditor
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\App.xaml
 31324963539
 
