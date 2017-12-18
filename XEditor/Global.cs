@@ -61,7 +61,8 @@ namespace XEditor
                 {
                     Global.StatusBarTextLeft = "Initialised";
                 }
-                else if (state == States.MapOpen)
+
+                if (state == States.MapOpen)
                 {
                     Global.StatusBarTextLeft = "New map opened";
                     MainWindow.Instance.EditorContainer.Visibility = Visibility.Visible;
