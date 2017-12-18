@@ -14,7 +14,7 @@ namespace XEditor
         // Properties
         public static MainWindow Instance;
         public bool MouseBusy = false;
-        public Entity highlightingEntity;
+        public List<Entity> highlightingEntities;
         public bool DraggingEntity;
 
         // Constructor
@@ -237,25 +237,33 @@ namespace XEditor
         {
             if(EditorGrid.IsMouseOver)
             {
-                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
-
-                if (highlightingEntity == null)
+                if (!DraggingEntity)
                 {
-                    highlightingEntity = Global.Entities.Find(t => t.Position.X == Global.SelectorIndex.X && t.Position.Y == Global.SelectorIndex.Y);
-                    Global.StatusBarTextRight = (highlightingEntity != null) ? highlightingEntity.Name : "";
+                    Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+                    // Need to also select when width/height is covered, possibly..
+                    highlightingEntities = Global.Entities.FindAll(t => t.Position.X == Global.SelectorIndex.X && t.Position.Y == Global.SelectorIndex.Y);
+                    Global.StatusBarTextRight = (highlightingEntities.Count > 0) ? highlightingEntities[highlightingEntities.Count - 1].Name : "";
                 }
 
-                if(highlightingEntity != null && Mouse.LeftButton == MouseButtonState.Pressed)
+                if(highlightingEntities.Count > 0 && Mouse.LeftButton == MouseButtonState.Pressed)
                 {
                     DraggingEntity = true;
                 }
 
                 if(DraggingEntity)
                 {
-                    highlightingEntity.Position = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
+                    // Need to add an offset here
+                    Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+
+                    highlightingEntities[highlightingEntities.Count-1].Position = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
 
                     if (Mouse.LeftButton == MouseButtonState.Released)
+                    {
+                        Entity newTopMost = highlightingEntities[highlightingEntities.Count - 1];
+                        Global.Entities.Remove(newTopMost);
+                        Global.Entities.Add(newTopMost);
                         DraggingEntity = false;
+                    }
                 }
 
                 if (Mouse.RightButton == MouseButtonState.Pressed)
@@ -263,20 +271,21 @@ namespace XEditor
                     MouseBusy = true;
                     ContextMenu entityContextMenu = new ContextMenu();
                     entityContextMenu.PlacementTarget = EditorGrid;
+
+                    List<MenuItem> menuItems = new List<MenuItem>();
                     
-                    if(highlightingEntity == null)
+                    MenuItem addEntityOption = new MenuItem();
+                    addEntityOption.Header = "Add new entity";
+                    addEntityOption.Click += NewEntityOption_Click;
+                    entityContextMenu.Items.Add(addEntityOption);
+
+                    foreach(Entity entity in highlightingEntities)
                     {
-                        MenuItem newEntityOption = new MenuItem();
-                        newEntityOption.Header = "Add new entity";
-                        newEntityOption.Click += NewEntityOption_Click;
-                        entityContextMenu.Items.Add(newEntityOption);
-                    }
-                    else
-                    {
-                        MenuItem newEntityOption = new MenuItem();
-                        newEntityOption.Header = "Edit "+ highlightingEntity.Name;
-                        newEntityOption.Click += EditEntityOption_Click;
-                        entityContextMenu.Items.Add(newEntityOption);
+                        MenuItem editEntityOption = new MenuItem();
+                        editEntityOption.Header = "Edit " + entity.Name;
+                        editEntityOption.CommandParameter = entity;
+                        editEntityOption.Click += EditEntityOption_Click;
+                        entityContextMenu.Items.Add(editEntityOption);
                     }
 
                     entityContextMenu.Closed += Entity_ContextMenu_Closed;
@@ -302,10 +311,13 @@ namespace XEditor
 
         private void EditEntityOption_Click(object sender, RoutedEventArgs e)
         {
+            var button = sender as MenuItem;
+            
+
             EntitySettings es = new EntitySettings
             {
                 ApplyButtonText = "Apply changes",
-                EditingEntity = highlightingEntity
+                EditingEntity = button.CommandParameter as Entity
             };
 
             es.ShowDialog();
