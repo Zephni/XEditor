@@ -35,7 +35,7 @@ namespace XEditor
                 Global.Command_New();
             });
 
-            Global.RunOnEventLoop("Ctrl+S", Global.KeyComboDown(Key.LeftCtrl, Key.S), () => {
+            Global.RunOnEventLoop("Ctrl+S", Global.KeyComboDown(Key.LeftCtrl, Key.S) && Global.State == States.MapOpen, () => {
                 Global.Command_Save();
             });
 
@@ -234,6 +234,7 @@ namespace XEditor
             RemoveAllTiles();
             Global.ResetLayers();
             Global.State = States.MapClosed;
+            Global.Unsaved = false;
         }
 
         public void OpenMap(Point mapSize, string texturePath, List<string> layers, List<Tile> tiles)

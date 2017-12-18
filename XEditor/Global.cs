@@ -369,6 +369,7 @@ namespace XEditor
             }
             else
             {
+                DialogWindowOpen = false;
                 Command_SaveAs();
             }
             DialogWindowOpen = false;
@@ -392,6 +393,7 @@ namespace XEditor
                 SaverLoader sl = new SaverLoader();
                 sl.SaveAs(sfd.FileName);
                 Global.Unsaved = false;
+                Global.OpenFilePath = sfd.FileName;
             }
 
             DialogWindowOpen = false;
