@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
+using XCompressFile;
 
 namespace XEditor
 {
@@ -13,13 +12,24 @@ namespace XEditor
     {
         public void SaveAs(string file)
         {
-            DataAsXDocument().Save(file);
+            XDocument xDoc = DataAsXDocument();
+            string b64CompressedData = Convert.ToBase64String(Compressor.Zip(xDoc.ToString()));
+            File.WriteAllText(file, b64CompressedData);
         }
 
         public void Load(string file)
         {
-            MainWindow.Instance.CloseMap();
-            DataFromDocument(XDocument.Load(file));
+            try
+            {
+                string b64CompressedData = File.ReadAllText(file);
+                XDocument loadedDoc = XDocument.Parse(Compressor.Unzip(Convert.FromBase64String(b64CompressedData)));
+                MainWindow.Instance.CloseMap();
+                DataFromDocument(loadedDoc);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Invalid file type");
+            }            
         }
 
         private XDocument DataAsXDocument()

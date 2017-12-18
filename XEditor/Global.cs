@@ -382,6 +382,9 @@ namespace XEditor
             DialogWindowOpen = true;
 
             SaveFileDialog sfd = new SaveFileDialog();
+            sfd.AddExtension = true;
+            sfd.Filter = "Level Files (*.lvl)|*.lvl";
+            sfd.DefaultExt = "lvl";
             sfd.ShowDialog(MainWindow.Instance);
 
             if (sfd.FileName != "")
