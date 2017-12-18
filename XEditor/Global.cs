@@ -123,6 +123,8 @@ namespace XEditor
 
         public static string OpenFilePath;
 
+        public static List<Entity> Entities;
+
         public static MouseEventArgs MouseEventArgs;
         public static int TileSize;
         public static List<Tile> Tiles;

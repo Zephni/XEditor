@@ -13,6 +13,9 @@ namespace XEditor
     {
         // Properties
         public static MainWindow Instance;
+        public bool MouseBusy = false;
+        public Entity highlightingEntity;
+        public bool DraggingEntity;
 
         // Constructor
         public MainWindow()
@@ -24,6 +27,7 @@ namespace XEditor
             Global.TileSize = 16;
             Global.State = States.Initialised;
             Global.Layers = new List<string>();
+            Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
         }
 
@@ -47,18 +51,26 @@ namespace XEditor
 
         public void MouseUpdates(MouseEventArgs e)
         {
-            if (Global.State == States.MapOpen)
+            if (!MouseBusy && Global.State == States.MapOpen)
             {
                 if(Global.ToolType == ToolTypes.TilePlacer)
                 {
                     TilePlacer_EditorGrid_MouseUpdates(e);
                     TilePlacer_Tileset_MouseUpdates(e);
                 }
+                else if (Global.ToolType == ToolTypes.TileSelector)
+                {
+
+                }
+                else if (Global.ToolType == ToolTypes.Entities)
+                {
+                    Entities_EditorGrid_MouseUpdates(e);
+                }
             }
         }
 
         // TilePlacer updates
-        public void TilePlacer_EditorGrid_MouseUpdates(MouseEventArgs e)
+        private void TilePlacer_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
             Rectangle ThisSelector = Selector;
 
@@ -169,7 +181,7 @@ namespace XEditor
                 ThisSelector.Visibility = Visibility.Hidden;
             }
         }
-        public void TilePlacer_Tileset_MouseUpdates(MouseEventArgs e)
+        private void TilePlacer_Tileset_MouseUpdates(MouseEventArgs e)
         {
             Rectangle ThisSelector = TilesetSelector;
             ThisSelector.Stroke = new SolidColorBrush(Colors.White);
@@ -221,7 +233,88 @@ namespace XEditor
         // TileSelector updates
 
         // Entities updates
+        private void Entities_EditorGrid_MouseUpdates(MouseEventArgs e)
+        {
+            if(EditorGrid.IsMouseOver)
+            {
+                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
 
+                if (highlightingEntity == null)
+                {
+                    highlightingEntity = Global.Entities.Find(t => t.Position.X == Global.SelectorIndex.X && t.Position.Y == Global.SelectorIndex.Y);
+                    Global.StatusBarTextRight = (highlightingEntity != null) ? highlightingEntity.Name : "";
+                }
+
+                if(highlightingEntity != null && Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    DraggingEntity = true;
+                }
+
+                if(DraggingEntity)
+                {
+                    highlightingEntity.Position = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
+
+                    if (Mouse.LeftButton == MouseButtonState.Released)
+                        DraggingEntity = false;
+                }
+
+                if (Mouse.RightButton == MouseButtonState.Pressed)
+                {
+                    MouseBusy = true;
+                    ContextMenu entityContextMenu = new ContextMenu();
+                    entityContextMenu.PlacementTarget = EditorGrid;
+                    
+                    if(highlightingEntity == null)
+                    {
+                        MenuItem newEntityOption = new MenuItem();
+                        newEntityOption.Header = "Add new entity";
+                        newEntityOption.Click += NewEntityOption_Click;
+                        entityContextMenu.Items.Add(newEntityOption);
+                    }
+                    else
+                    {
+                        MenuItem newEntityOption = new MenuItem();
+                        newEntityOption.Header = "Edit "+ highlightingEntity.Name;
+                        newEntityOption.Click += EditEntityOption_Click;
+                        entityContextMenu.Items.Add(newEntityOption);
+                    }
+
+                    entityContextMenu.Closed += Entity_ContextMenu_Closed;
+                    entityContextMenu.IsOpen = true;
+                }
+            }
+        }
+
+        private void NewEntityOption_Click(object sender, RoutedEventArgs e)
+        {
+            EntitySettings es = new EntitySettings
+            {
+                ApplyButtonText = "Create entity",
+                _EntityName = "Entity",
+                _PosX = Global.SelectorIndex.X.ToString(),
+                _PosY = Global.SelectorIndex.Y.ToString(),
+                _SizeX = "1",
+                _SizeY = "1"
+            };
+
+            es.ShowDialog();
+        }
+
+        private void EditEntityOption_Click(object sender, RoutedEventArgs e)
+        {
+            EntitySettings es = new EntitySettings
+            {
+                ApplyButtonText = "Apply changes",
+                EditingEntity = highlightingEntity
+            };
+
+            es.ShowDialog();
+        }
+
+        private void Entity_ContextMenu_Closed(object sender, RoutedEventArgs e)
+        {
+            MouseBusy = false;
+        }
 
         // Methods
         public void NewMap(Point mapSize, string texturePath, List<string> layers)
