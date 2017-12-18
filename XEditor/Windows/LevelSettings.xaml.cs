@@ -32,14 +32,20 @@ namespace XEditor
 
         private void Apply_Click(object sender, RoutedEventArgs e)
         {
-            if(Global.State != States.MapOpen)
+            string tilesetPath = TilesetPath.Text;
+            YesNoCancel ync = Global.ImageChecker(tilesetPath, out tilesetPath);
+
+            if (ync == YesNoCancel.Cancel || ync == YesNoCancel.No)
+                return;
+
+            if (Global.State != States.MapOpen)
             {
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text, new List<string> { "Background", "Main", "Foreground" });
+                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" });
             }
             else
             {
                 List<Tile> newTiles = MainWindow.Instance.GetTileList();
-                MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), TilesetPath.Text, new List<string> { "Background", "Main", "Foreground" }, newTiles);
+                MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" }, newTiles);
             }
 
             this.Close();
@@ -50,9 +56,12 @@ namespace XEditor
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.FileName = TilesetPath.Text;
             ofd.RestoreDirectory = true;
+
             if(ofd.ShowDialog(this) == true)
             {
-                TilesetPath.Text = ofd.FileName;
+                string tilesetPath = ofd.FileName;
+
+                TilesetPath.Text = tilesetPath;
                 TilesetPath.ScrollToEnd();
             }
         }

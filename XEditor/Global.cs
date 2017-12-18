@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -27,6 +28,13 @@ namespace XEditor
     {
         AddingTiles,
         RemovingTiles
+    }
+
+    public enum YesNoCancel
+    {
+        Cancel,
+        Yes,
+        No
     }
 
     public static class Global
@@ -248,6 +256,53 @@ namespace XEditor
                     return false;
 
             return true;
+        }
+
+        public static YesNoCancel ImageChecker(string tilesetPath, out string outPath)
+        {
+            outPath = tilesetPath;
+            bool invalidImage = true;
+
+            string invalidMsg = "";
+
+            if (!File.Exists(tilesetPath))
+                invalidMsg = "Could not find tileset ("+tilesetPath+"), browse for file?";
+
+            ImageFormat.ImageFormats[] validifs = new ImageFormat.ImageFormats[] {
+                ImageFormat.ImageFormats.bmp,
+                ImageFormat.ImageFormats.png,
+                ImageFormat.ImageFormats.jpeg
+            };
+
+            if (invalidMsg == "" && !validifs.Contains(ImageFormat.GetImageFormat(File.ReadAllBytes(tilesetPath))))
+                invalidMsg = "Image must be png, bmp or jpg format, browse for file?";
+            
+            if (invalidMsg == "")
+            {
+                invalidImage = false;
+            }
+            else
+            {
+                MessageBoxResult rsltMessageBox = MessageBox.Show(invalidMsg, "Tileset error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+                if (rsltMessageBox == MessageBoxResult.Yes)
+                {
+                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+                    ofd.FileName = tilesetPath;
+                    ofd.RestoreDirectory = true;
+                    if (ofd.ShowDialog(MainWindow.Instance) == true)
+                    {
+                        outPath = ofd.FileName;
+                        return ImageChecker(outPath, out outPath);
+                    }
+                }
+                else
+                {
+                    return YesNoCancel.Cancel;
+                }
+            }              
+
+            return (!invalidImage) ? YesNoCancel.Yes : YesNoCancel.No;
         }
 
         // Commands

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace XEditor
@@ -58,6 +60,11 @@ namespace XEditor
         private void DataFromDocument(XDocument xDoc)
         {
             string tilesetPath = xDoc.Root.Element("EditorConfig").Element("Tileset").Value;
+
+            YesNoCancel ync = Global.ImageChecker(tilesetPath, out tilesetPath);
+
+            if (ync == YesNoCancel.Cancel || ync == YesNoCancel.No)
+                return;
 
             string[] mapSize = xDoc.Root.Element("Config").Element("MapSize").Value.Split(',');
             Point mapSizep = new Point(Convert.ToInt16(mapSize[0]), Convert.ToInt16(mapSize[1]));
