@@ -58,10 +58,10 @@
     </ApplicationDefinition>
     <Compile Include="Compressor.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="EnumMatchToBooleanConverter.cs" />
     <Compile Include="Windows\EntitySettings.xaml.cs">
       <DependentUpon>EntitySettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EnumMatchToBooleanConverter.cs" />
     <Compile Include="ImageFormat.cs" />
     <Compile Include="Windows\AddLayer.xaml.cs">
       <DependentUpon>AddLayer.xaml</DependentUpon>

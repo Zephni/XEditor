@@ -55,6 +55,17 @@ namespace XEditor
                 layers.Add(new XElement(layer));
             xDoc.Root.Element("Config").Add(new XElement("Layers", layers));
 
+            // Entity
+            List<object> entities = new List<object>();
+            foreach (Entity entity in Global.Entities)
+                entities.Add(new XElement("Entity",
+                    new XElement("Name", entity.Name),
+                    new XElement("Location", entity.Position.X + "," + entity.Position.Y),
+                    new XElement("Size", entity.Size.X + "," + entity.Size.Y),
+                    new XElement("CustomData", entity.CustomData)
+                ));
+            xDoc.Root.Add(new XElement("Entities", entities));
+
             // Tiles
             List<object> tiles = new List<object>();
             foreach (Tile tile in Global.Tiles)
@@ -83,7 +94,8 @@ namespace XEditor
             foreach(XElement xEl in xDoc.Root.Element("Config").Elements("Layers").Descendants())
                 layers.Add(xEl.Name.ToString());
 
-            List<Tile> tiles = new List<Tile>();
+            MainWindow.Instance.NewMap(mapSizep, tilesetPath, layers);
+
             foreach (XElement xEl in xDoc.Root.Element("Tiles").Elements("Tile"))
             {
                 string[] source = xEl.Element("Source").Value.Split(',');
@@ -96,10 +108,26 @@ namespace XEditor
                     Layer = Convert.ToInt16(location[2])
                 };
 
-                tiles.Add(tile);
+                MainWindow.Instance.AddTile(tile);
+            }
+
+            foreach (XElement xEl in xDoc.Root.Element("Entities").Elements("Entity"))
+            {
+                string[] location = xEl.Element("Location").Value.Split(',');
+                string[] size = xEl.Element("Size").Value.Split(',');
+
+                Entity entity = new Entity
+                {
+                    Name = xEl.Element("Name").Value,
+                    Position = new Point(Convert.ToInt16(location[0]), Convert.ToInt16(location[1])),
+                    Size = new Point(Convert.ToInt16(size[0]), Convert.ToInt16(size[1])),
+                    CustomData = xEl.Element("CustomData").Value
+                };
+
+                Global.Entities.Add(entity);
             }
             
-            MainWindow.Instance.OpenMap(mapSizep, tilesetPath, layers, tiles);
+            Global.ToolType = ToolTypes.TilePlacer;
 
             Global.TileLayer = Convert.ToInt16(xDoc.Root.Element("EditorConfig").Element("LayerIndex").Value);
         }

@@ -38,3 +38,6 @@ C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\Windows\EntitySettings.g.cs
 C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Debug\Windows\EntitySettings.baml
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\EntitySettings.g.cs
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\EntitySettings.baml

@@ -45,7 +45,21 @@ namespace XEditor
             else
             {
                 List<Tile> newTiles = MainWindow.Instance.GetTileList();
-                MainWindow.Instance.OpenMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" }, newTiles);
+                List<Entity> entityList = new List<Entity>();
+                for (int i = 0; i < Global.Entities.Count; i++)
+                {
+                    entityList.Add(Global.Entities[i]);
+                    Global.Entities[i].Destroy();
+                }
+                    
+                // Needs fixing
+                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" });
+                MainWindow.Instance.AddTiles(newTiles);
+                foreach(Entity entity in entityList)
+                {
+                    entity.AddToGrid();
+                    Global.Entities.Add(entity);
+                }
             }
 
             this.Close();

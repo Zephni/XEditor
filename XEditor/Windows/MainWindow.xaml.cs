@@ -16,6 +16,7 @@ namespace XEditor
         public bool MouseBusy = false;
         public List<Entity> highlightingEntities;
         public bool DraggingEntity;
+        public Point DraggingOffset;
 
         // Constructor
         public MainWindow()
@@ -231,31 +232,38 @@ namespace XEditor
         }
 
         // TileSelector updates
+        public void TileSelector_EditorGrid_MouseUpdates(MouseEventArgs e)
+        {
+
+        }
 
         // Entities updates
         private void Entities_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
             if(EditorGrid.IsMouseOver)
             {
+                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+
                 if (!DraggingEntity)
                 {
-                    Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
-                    // Need to also select when width/height is covered, possibly..
-                    highlightingEntities = Global.Entities.FindAll(t => t.Position.X == Global.SelectorIndex.X && t.Position.Y == Global.SelectorIndex.Y);
+                    highlightingEntities = Global.Entities.FindAll(t =>
+                        (t.Position.X <= Global.SelectorIndex.X && t.Position.X + t.Size.X >= Global.SelectorIndex.X)
+                        && (t.Position.Y <= Global.SelectorIndex.Y && t.Position.Y + t.Size.Y >= Global.SelectorIndex.Y)
+                    );
                     Global.StatusBarTextRight = (highlightingEntities.Count > 0) ? highlightingEntities[highlightingEntities.Count - 1].Name : "";
                 }
 
-                if(highlightingEntities.Count > 0 && Mouse.LeftButton == MouseButtonState.Pressed)
+                if (!DraggingEntity && highlightingEntities.Count > 0 && Mouse.LeftButton == MouseButtonState.Pressed)
                 {
+                    Entity entity = highlightingEntities[highlightingEntities.Count - 1];
+                    DraggingOffset = new Point(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
                     DraggingEntity = true;
                 }
 
                 if(DraggingEntity)
                 {
                     // Need to add an offset here
-                    Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
-
-                    highlightingEntities[highlightingEntities.Count-1].Position = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
+                    highlightingEntities[highlightingEntities.Count-1].Position = new Point(Global.SelectorIndex.X - DraggingOffset.X, Global.SelectorIndex.Y - DraggingOffset.Y);
 
                     if (Mouse.LeftButton == MouseButtonState.Released)
                     {
@@ -331,8 +339,10 @@ namespace XEditor
         // Methods
         public void NewMap(Point mapSize, string texturePath, List<string> layers)
         {
+            CloseMap();
             Global.Unsaved = true;
             Global.ResetLayers();
+            RemoveAllTiles();
 
             foreach (string layer in layers)
                 Global.AddLayer(layer);
@@ -351,22 +361,6 @@ namespace XEditor
             Global.State = States.MapClosed;
             Global.Unsaved = false;
             Global.ToolType = ToolTypes.Null;
-        }
-
-        public void OpenMap(Point mapSize, string texturePath, List<string> layers, List<Tile> tiles)
-        {
-            CloseMap();
-            NewMap(mapSize, texturePath, layers);
-
-            foreach (Tile tile in tiles)
-            {
-                tile.Location = tile.Location;
-                tile.Layer = tile.Layer;
-                tile.TilesetLocation = tile.TilesetLocation;
-            }
-
-            AddTiles(tiles);
-            Global.ToolType = ToolTypes.TilePlacer;
         }
 
         public void TilesetSelectArea(Rect rect)
@@ -399,7 +393,12 @@ namespace XEditor
 
         public void AddTile(Tile tile)
         {
-            Global.Unsaved = true;
+            if (tile.Location.X < 0 || tile.Location.X >= Global.MapSize.X)
+                return;
+            if (tile.Location.Y < 0 || tile.Location.Y >= Global.MapSize.Y)
+                return;
+
+            Global.Unsaved = true; 
 
             if (Global.GetTile(tile.Location.X, tile.Location.Y, tile.Layer) != null)
                 RemoveTile(tile.Location.X, tile.Location.Y, tile.Layer);
@@ -433,8 +432,7 @@ namespace XEditor
             Global.Unsaved = true;
             if (tile == null)
                 return false;
-
-            EditorGrid.Children.RemoveAt(Global.Tiles.IndexOf(tile) + 1);
+            
             EditorGrid.Children.Remove(tile.Rectangle);
             Global.Tiles.Remove(tile);
             return true;
