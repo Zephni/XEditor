@@ -17,6 +17,11 @@ namespace XEditor
         public List<Entity> highlightingEntities;
         public bool DraggingEntity;
         public Point DraggingOffset;
+        public bool TileSelector_Dragging = false;
+        public Rectangle TileSelector_Rectangle;
+        public Rectangle TileSelector_RectangleSelected;
+        public Rect TileSelector_SelectedRect;
+        public Point TileSelector_DraggingOrigin;
 
         // Constructor
         public MainWindow()
@@ -37,17 +42,17 @@ namespace XEditor
         {
             MouseUpdates(Global.MouseEventArgs);
 
-            Global.RunOnEventLoop("Ctrl+N", Global.KeyComboDown(Key.LeftCtrl, Key.N), () => {
-                Global.Command_New();
-            });
+            // File menu
+            Global.RunOnEventLoop("Ctrl+N", Global.KeyComboDown(Key.LeftCtrl, Key.N), () => {Global.Command_New();});
+            Global.RunOnEventLoop("Ctrl+S", Global.State == States.MapOpen && Global.KeyComboDown(Key.LeftCtrl, Key.S), () => {Global.Command_Save();});
+            Global.RunOnEventLoop("Ctrl+O", Global.KeyComboDown(Key.LeftCtrl, Key.O), () => {Global.Command_Open();});
 
-            Global.RunOnEventLoop("Ctrl+S", Global.KeyComboDown(Key.LeftCtrl, Key.S) && Global.State == States.MapOpen, () => {
-                Global.Command_Save();
-            });
-
-            Global.RunOnEventLoop("Ctrl+O", Global.KeyComboDown(Key.LeftCtrl, Key.O), () => {
-                Global.Command_Open();
-            });
+            // Shortcuts
+            Global.RunOnEventLoop("Ctrl+C", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.C), () => { Global.Command_CopyTiles(TileSelector_SelectedRect, Global.TileLayer); });
+            Global.RunOnEventLoop("Ctrl+X", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.X), () => { Global.Command_CutTiles(TileSelector_SelectedRect, Global.TileLayer); });
+            Global.RunOnEventLoop("Ctrl+V", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.V), () => { Global.Command_PasteTiles(TileSelector_SelectedRect, Global.TileLayer); });
+            Global.RunOnEventLoop("Delete (Tiles)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.Delete), () => { Global.Command_RemoveTiles(TileSelector_SelectedRect, Global.TileLayer); });
+            Global.RunOnEventLoop("Delete (Entities)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.KeyComboDown(Key.Delete), () => { Global.GetSelectedEntities(entity => entity.Destroy()); });
         }
 
         public void MouseUpdates(MouseEventArgs e)
@@ -61,7 +66,7 @@ namespace XEditor
                 }
                 else if (Global.ToolType == ToolTypes.TileSelector)
                 {
-
+                    TileSelector_EditorGrid_MouseUpdates(e);
                 }
                 else if (Global.ToolType == ToolTypes.Entities)
                 {
@@ -234,13 +239,72 @@ namespace XEditor
         // TileSelector updates
         public void TileSelector_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
+            if (EditorGrid.IsMouseOver)
+            {
+                Point MouseIndex = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
 
+                if (!TileSelector_Dragging && e.LeftButton == MouseButtonState.Pressed)
+                {
+                    TileSelector_Dragging = true;
+                    TileSelector_DraggingOrigin = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
+                    TileSelector_Rectangle = new Rectangle {
+                        Fill = Brushes.LightSkyBlue,
+                        Stroke = Brushes.CornflowerBlue,
+                        StrokeThickness = 1,
+                        StrokeDashArray = new DoubleCollection { 2 },
+                        Opacity = 0.5d
+                    };
+                    TileSelector_Rectangle.SetValue(Panel.ZIndexProperty, 200);
+                    EditorGrid.Children.Add(TileSelector_Rectangle);
+                    EditorGrid.Children.Remove(TileSelector_RectangleSelected);
+                }
+
+                if(TileSelector_Dragging)
+                {
+                    TileSelector_SelectedRect = new Rect(
+                        (int)((MouseIndex.X >= TileSelector_SelectedRect.X) ? TileSelector_DraggingOrigin.X : MouseIndex.X),
+                        (int)((MouseIndex.Y >= TileSelector_SelectedRect.Y) ? TileSelector_DraggingOrigin.Y : MouseIndex.Y),
+                        (int)(Math.Abs(TileSelector_DraggingOrigin.X - MouseIndex.X)) + 1,
+                        (int)(Math.Abs(TileSelector_DraggingOrigin.Y - MouseIndex.Y)) + 1
+                    );
+
+                    Global.StatusBarTextRight = TileSelector_SelectedRect.X + " : " + TileSelector_SelectedRect.Y;
+
+                    TileSelector_Rectangle.Margin = new Thickness(TileSelector_SelectedRect.X * Global.TileSize, TileSelector_SelectedRect.Y * Global.TileSize, 0, 0);
+                    TileSelector_Rectangle.Width = TileSelector_SelectedRect.Width * Global.TileSize;
+                    TileSelector_Rectangle.Height = TileSelector_SelectedRect.Height * Global.TileSize;
+
+                    if (TileSelector_Dragging && e.LeftButton == MouseButtonState.Released)
+                    {
+                        TileSelector_Dragging = false;
+                        EditorGrid.Children.Remove(TileSelector_Rectangle);
+
+                        TileSelector_RectangleSelected = new Rectangle
+                        {
+                            Fill = Brushes.LightSkyBlue,
+                            Stroke = Brushes.CornflowerBlue,
+                            StrokeThickness = 2,
+                            StrokeDashArray = new DoubleCollection { 2 },
+                            Opacity = 0.6d,
+                            Margin = new Thickness(TileSelector_SelectedRect.X * Global.TileSize, TileSelector_SelectedRect.Y * Global.TileSize, 0, 0),
+                            Width = TileSelector_SelectedRect.Width * Global.TileSize,
+                            Height = TileSelector_SelectedRect.Height * Global.TileSize
+                        };
+                        TileSelector_RectangleSelected.SetValue(Panel.ZIndexProperty, 201);
+                        EditorGrid.Children.Add(TileSelector_RectangleSelected);
+                    }
+                }
+
+                if (TileSelector_Dragging)
+                    Global.StatusBarTextRight = "Selecting tiles " + TileSelector_SelectedRect.ToString();
+            }
         }
 
         // Entities updates
+        private bool Entities_LeftClickDown = false;
         private void Entities_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
-            if(EditorGrid.IsMouseOver)
+            if (EditorGrid.IsMouseOver)
             {
                 Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
 
@@ -253,19 +317,27 @@ namespace XEditor
                     Global.StatusBarTextRight = (highlightingEntities.Count > 0) ? highlightingEntities[highlightingEntities.Count - 1].Name : "";
                 }
 
-                if (!DraggingEntity && highlightingEntities.Count > 0 && Mouse.LeftButton == MouseButtonState.Pressed)
+                if(!Entities_LeftClickDown && e.LeftButton == MouseButtonState.Pressed)
                 {
-                    Entity entity = highlightingEntities[highlightingEntities.Count - 1];
-                    DraggingOffset = new Point(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
-                    DraggingEntity = true;
+                    Entities_LeftClickDown = true;
+                    foreach (Entity temp in Global.Entities)
+                        temp.Selected = false;
+
+                    if (!DraggingEntity && highlightingEntities.Count > 0)
+                    {
+                        Entity entity = highlightingEntities[highlightingEntities.Count - 1];
+                        entity.Selected = true;
+                        DraggingOffset = new Point(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
+                        DraggingEntity = true;
+                    }
                 }
 
                 if(DraggingEntity)
                 {
-                    // Need to add an offset here
+                    highlightingEntities[highlightingEntities.Count - 1].Selected = true;
                     highlightingEntities[highlightingEntities.Count-1].Position = new Point(Global.SelectorIndex.X - DraggingOffset.X, Global.SelectorIndex.Y - DraggingOffset.Y);
 
-                    if (Mouse.LeftButton == MouseButtonState.Released)
+                    if (e.LeftButton == MouseButtonState.Released)
                     {
                         Entity newTopMost = highlightingEntities[highlightingEntities.Count - 1];
                         Global.Entities.Remove(newTopMost);
@@ -274,7 +346,12 @@ namespace XEditor
                     }
                 }
 
-                if (Mouse.RightButton == MouseButtonState.Pressed)
+                if (e.LeftButton == MouseButtonState.Released)
+                {
+                    Entities_LeftClickDown = false;
+                }
+
+                if (e.RightButton == MouseButtonState.Pressed)
                 {
                     MouseBusy = true;
                     ContextMenu entityContextMenu = new ContextMenu();
@@ -357,6 +434,7 @@ namespace XEditor
         public void CloseMap()
         {
             RemoveAllTiles();
+            RemoveAllEntities();
             Global.ResetLayers();
             Global.State = States.MapClosed;
             Global.Unsaved = false;
@@ -384,7 +462,7 @@ namespace XEditor
 
         public Tile CreateTileObject(int tilesetPosX, int tilesetPosY)
         {
-            Tile tile = new Tile {                
+            Tile tile = new Tile {
                 TilesetLocation = new Point(tilesetPosX, tilesetPosY)
             };
 
@@ -455,6 +533,12 @@ namespace XEditor
             EditorGrid.Children.RemoveRange(1, EditorGrid.Children.Count - 1);
 
             Global.Tiles = new List<Tile>();
+        }
+
+        public void RemoveAllEntities()
+        {
+            for (int i = 0; i < Global.Entities.Count; i++)
+                Global.Entities[i].Destroy();
         }
 
         // Window events

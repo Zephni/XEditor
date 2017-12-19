@@ -16,6 +16,35 @@ namespace XEditor
             }
         }
 
+        private bool selected;
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                selected = value;
+
+                if(selected == false)
+                {
+                    Rectangle.Fill = Brushes.LightBlue;
+                    Rectangle.Stroke = Brushes.DarkBlue;
+                    Rectangle.StrokeThickness = 2;
+                    Rectangle.StrokeDashArray = new DoubleCollection { 1 };
+                    Rectangle.SetValue(Panel.ZIndexProperty, 100);
+                    Rectangle.Opacity = 0.4f;
+                }
+                else
+                {
+                    Rectangle.Fill = Brushes.AntiqueWhite;
+                    Rectangle.Stroke = Brushes.OrangeRed;
+                    Rectangle.StrokeThickness = 2;
+                    Rectangle.StrokeDashArray = new DoubleCollection { 1 };
+                    Rectangle.Opacity = 0.8f;
+                    Rectangle.SetValue(Panel.ZIndexProperty, 101);
+                }
+            }
+        }
+
         private string customData;
         public string CustomData
         {
@@ -71,8 +100,10 @@ namespace XEditor
         public Entity()
         {
             Rectangle = new Rectangle();
-            Rectangle.Fill = new SolidColorBrush(new Color { R = 50, G = 50, B = 230, A = 100 });
+            Rectangle.Fill = Brushes.Black;
+            Rectangle.Opacity = 0.8f;
             Rectangle.SetValue(Panel.ZIndexProperty, 100);
+            Selected = false;
             AddToGrid();
         }
 

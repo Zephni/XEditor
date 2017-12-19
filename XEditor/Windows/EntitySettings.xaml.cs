@@ -40,6 +40,7 @@ namespace XEditor
                 _SizeX = editingEntity.Size.X.ToString();
                 _SizeY = editingEntity.Size.Y.ToString();
                 _CustomData = editingEntity.CustomData.ToString();
+                DeleteButton.Visibility = Visibility.Visible;
             }
         }
 
@@ -79,6 +80,7 @@ namespace XEditor
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             EntityName.SelectAll();
+            DeleteButton.Visibility = Visibility.Collapsed;
         }
 
         private void ApplyButton_Click(object sender, RoutedEventArgs e)
@@ -104,6 +106,15 @@ namespace XEditor
             }
 
             Close();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (EditingEntity != null)
+            {
+                EditingEntity.Destroy();
+                Close();
+            }
         }
     }
 }

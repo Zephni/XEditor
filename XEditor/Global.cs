@@ -94,11 +94,19 @@ namespace XEditor
                 toolType = value;
 
                 if (toolType == ToolTypes.TilePlacer)
+                {
                     MainWindow.Instance.RadioButton_TilePlacer.IsChecked = true;
+                    MainWindow.Instance.TileSelector_RectangleSelected = null;
+                    MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
+                }  
                 else if (toolType == ToolTypes.TileSelector)
                     MainWindow.Instance.RadioButton_TileSelector.IsChecked = true;
                 else if(toolType == ToolTypes.Entities)
+                {
                     MainWindow.Instance.RadioButton_Entities.IsChecked = true;
+                    MainWindow.Instance.TileSelector_RectangleSelected = null;
+                    MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
+                }
             }
         }
 
@@ -264,6 +272,15 @@ namespace XEditor
             return Global.GetTile(location.X, location.Y, z);
         }
 
+        public static List<Entity> GetSelectedEntities(Action<Entity> entityAction = null)
+        {
+            List<Entity> entities = Global.Entities.FindAll(e => e.Selected == true);
+            if (entityAction != null)
+                for (int i = 0; i < entities.Count; i++)
+                    entityAction(entities[i]);
+            return entities;
+        }
+
         // RunOnEventLoop
         public static List<string> ConditionTracker = new List<string>();
         public static void RunOnEventLoop(string key, bool condition, Action action)
@@ -337,6 +354,72 @@ namespace XEditor
 
         // Commands
         private static bool DialogWindowOpen = false;
+
+        public static List<Tile> CopiedTiles = new List<Tile>();
+        public static Point CopiedRectOffset;
+        public static void Command_CopyTiles(Rect rect, int? layer)
+        {
+            CopiedRectOffset = new Point(Convert.ToInt16(rect.X), Convert.ToInt16(rect.Y));
+
+            CopiedTiles = Global.Tiles.FindAll(t =>
+                t.Location.X >= rect.X
+                && t.Location.Y >= rect.Y
+                && t.Location.X < rect.X + rect.Width
+                && t.Location.Y < rect.Y + rect.Height
+                && t.Layer == ((layer != null) ? layer : t.Layer)
+            );
+
+            StatusBarTextRight = "Copied " + CopiedTiles.Count + " tiles)";
+        }
+
+        public static void Command_CutTiles(Rect rect, int? layer)
+        {
+            Command_CopyTiles(rect, layer);
+            foreach (Tile tile in CopiedTiles)
+                MainWindow.Instance.RemoveTile(tile);
+
+            StatusBarTextRight = "Cut " + CopiedTiles.Count + " tiles)";
+        }
+
+        public static void Command_PasteTiles(Rect rect, int? layer)
+        {
+            if (CopiedTiles == null || CopiedTiles.Count == 0)
+                return;
+
+            foreach (Tile tile in CopiedTiles)
+            {
+                Tile newTile = tile.DeepCopy();
+
+                newTile.Location = new Point(
+                    Convert.ToInt16((tile.Location.X - CopiedRectOffset.X) + rect.X),
+                    Convert.ToInt16((tile.Location.Y - CopiedRectOffset.Y) + rect.Y)
+                );
+
+                if (layer != null)
+                    newTile.Layer = (int)layer;
+
+                MainWindow.Instance.AddTile(newTile);
+            }
+
+            StatusBarTextRight = "Pasted " + CopiedTiles.Count + " tiles)";
+        }
+
+        public static void Command_RemoveTiles(Rect rect, int? layer)
+        {
+            List<Tile> tiles = Global.Tiles.FindAll(t =>
+                t.Location.X >= rect.X
+                && t.Location.Y >= rect.Y
+                && t.Location.X < rect.X + rect.Width
+                && t.Location.Y < rect.Y + rect.Height
+                && t.Layer == ((layer != null) ? layer : t.Layer)
+            );
+
+            foreach (Tile tile in tiles)
+                MainWindow.Instance.RemoveTile(tile);
+
+            StatusBarTextRight = "Removed " + CopiedTiles.Count + " tiles)";
+        }
+
         public static void Command_New()
         {
             if (DialogWindowOpen)
