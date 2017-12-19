@@ -290,9 +290,18 @@ namespace XEditor
                             Width = TileSelector_SelectedRect.Width * Global.TileSize,
                             Height = TileSelector_SelectedRect.Height * Global.TileSize
                         };
-                        TileSelector_RectangleSelected.SetValue(Panel.ZIndexProperty, 201);
+                        TileSelector_RectangleSelected.SetValue(Panel.ZIndexProperty, 199);
                         EditorGrid.Children.Add(TileSelector_RectangleSelected);
                     }
+                }
+
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    EditorGrid.Children.Remove(TileSelector_RectangleSelected);
+                    EditorGrid.Children.Remove(TileSelector_Rectangle);
+                    TileSelector_RectangleSelected = null;
+                    TileSelector_Dragging = false;
+                    TileSelector_SelectedRect = default(Rect);
                 }
 
                 if (TileSelector_Dragging)

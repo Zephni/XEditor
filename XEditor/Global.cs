@@ -96,16 +96,20 @@ namespace XEditor
                 if (toolType == ToolTypes.TilePlacer)
                 {
                     MainWindow.Instance.RadioButton_TilePlacer.IsChecked = true;
-                    MainWindow.Instance.TileSelector_RectangleSelected = null;
                     MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
+                    MainWindow.Instance.TileSelector_RectangleSelected = null;
+                    Global.GetSelectedEntities(entity => entity.Selected = false);
                 }  
                 else if (toolType == ToolTypes.TileSelector)
+                {
                     MainWindow.Instance.RadioButton_TileSelector.IsChecked = true;
+                    Global.GetSelectedEntities(entity => entity.Selected = false);
+                }
                 else if(toolType == ToolTypes.Entities)
                 {
                     MainWindow.Instance.RadioButton_Entities.IsChecked = true;
-                    MainWindow.Instance.TileSelector_RectangleSelected = null;
                     MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
+                    MainWindow.Instance.TileSelector_RectangleSelected = null;
                 }
             }
         }
