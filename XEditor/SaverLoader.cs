@@ -15,6 +15,7 @@ namespace XEditor
             XDocument xDoc = DataAsXDocument();
             string b64CompressedData = Convert.ToBase64String(Compressor.Zip(xDoc.ToString()));
             File.WriteAllText(file, b64CompressedData);
+            Global.StatusBarTextLeft = "Saved map '" + file + "'";
         }
 
         public void Load(string file)
@@ -25,6 +26,7 @@ namespace XEditor
                 XDocument loadedDoc = XDocument.Parse(Compressor.Unzip(Convert.FromBase64String(b64CompressedData)));
                 MainWindow.Instance.CloseMap();
                 DataFromDocument(loadedDoc);
+                Global.StatusBarTextLeft = "Opened map '"+file+"'";
             }
             catch(Exception e)
             {
@@ -55,7 +57,7 @@ namespace XEditor
                 layers.Add(new XElement(layer));
             xDoc.Root.Element("Config").Add(new XElement("Layers", layers));
 
-            // Entity
+            // Entities
             List<object> entities = new List<object>();
             foreach (Entity entity in Global.Entities)
                 entities.Add(new XElement("Entity",

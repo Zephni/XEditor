@@ -83,6 +83,9 @@ namespace XEditor
             }
         }
 
+        public static List<Tile> CopiedTiles = new List<Tile>();
+        public static Point CopiedRectOffset;
+
         private static ToolTypes toolType;
         public static ToolTypes ToolType
         {
@@ -99,17 +102,20 @@ namespace XEditor
                     MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
                     MainWindow.Instance.TileSelector_RectangleSelected = null;
                     Global.GetSelectedEntities(entity => entity.Selected = false);
+                    Global.StatusBarTextLeft = "Switched to tile placer mode";
                 }  
                 else if (toolType == ToolTypes.TileSelector)
                 {
                     MainWindow.Instance.RadioButton_TileSelector.IsChecked = true;
                     Global.GetSelectedEntities(entity => entity.Selected = false);
+                    Global.StatusBarTextLeft = "Switched to tile selector mode";
                 }
                 else if(toolType == ToolTypes.Entities)
                 {
                     MainWindow.Instance.RadioButton_Entities.IsChecked = true;
                     MainWindow.Instance.EditorGrid.Children.Remove(MainWindow.Instance.TileSelector_RectangleSelected);
                     MainWindow.Instance.TileSelector_RectangleSelected = null;
+                    Global.StatusBarTextLeft = "Switched to entity mode";
                 }
             }
         }
@@ -152,7 +158,10 @@ namespace XEditor
                 tileLayer = value;
 
                 if (MainWindow.Instance.TileLayerComboBox.SelectedIndex != tileLayer)
+                {
                     MainWindow.Instance.TileLayerComboBox.SelectedIndex = tileLayer;
+                    Global.StatusBarTextLeft = "Switched to layer "+ MainWindow.Instance.TileLayerComboBox.SelectedValue;
+                }
             }
         }
 
@@ -359,8 +368,6 @@ namespace XEditor
         // Commands
         private static bool DialogWindowOpen = false;
 
-        public static List<Tile> CopiedTiles = new List<Tile>();
-        public static Point CopiedRectOffset;
         public static void Command_CopyTiles(Rect rect, int? layer)
         {
             CopiedRectOffset = new Point(Convert.ToInt16(rect.X), Convert.ToInt16(rect.Y));
@@ -373,7 +380,7 @@ namespace XEditor
                 && t.Layer == ((layer != null) ? layer : t.Layer)
             );
 
-            StatusBarTextRight = "Copied " + CopiedTiles.Count + " tiles)";
+            StatusBarTextLeft = "Copied " + CopiedTiles.Count + " tiles)";
         }
 
         public static void Command_CutTiles(Rect rect, int? layer)
@@ -382,7 +389,7 @@ namespace XEditor
             foreach (Tile tile in CopiedTiles)
                 MainWindow.Instance.RemoveTile(tile);
 
-            StatusBarTextRight = "Cut " + CopiedTiles.Count + " tiles)";
+            StatusBarTextLeft = "Cut " + CopiedTiles.Count + " tiles)";
         }
 
         public static void Command_PasteTiles(Rect rect, int? layer)
@@ -405,7 +412,7 @@ namespace XEditor
                 MainWindow.Instance.AddTile(newTile);
             }
 
-            StatusBarTextRight = "Pasted " + CopiedTiles.Count + " tiles)";
+            StatusBarTextLeft = "Pasted " + CopiedTiles.Count + " tiles)";
         }
 
         public static void Command_RemoveTiles(Rect rect, int? layer)
@@ -421,7 +428,7 @@ namespace XEditor
             foreach (Tile tile in tiles)
                 MainWindow.Instance.RemoveTile(tile);
 
-            StatusBarTextRight = "Removed " + CopiedTiles.Count + " tiles)";
+            StatusBarTextLeft = "Removed " + CopiedTiles.Count + " tiles)";
         }
 
         public static void Command_New()

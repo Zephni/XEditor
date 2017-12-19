@@ -35,6 +35,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
+            Global.StatusBarTextLeft = "Initialised";
         }
 
         // Updates
@@ -254,7 +255,7 @@ namespace XEditor
                         StrokeDashArray = new DoubleCollection { 2 },
                         Opacity = 0.5d
                     };
-                    TileSelector_Rectangle.SetValue(Panel.ZIndexProperty, 200);
+                    TileSelector_Rectangle.SetValue(Panel.ZIndexProperty, 199);
                     EditorGrid.Children.Add(TileSelector_Rectangle);
                     EditorGrid.Children.Remove(TileSelector_RectangleSelected);
                 }
@@ -262,13 +263,11 @@ namespace XEditor
                 if(TileSelector_Dragging)
                 {
                     TileSelector_SelectedRect = new Rect(
-                        (int)((MouseIndex.X >= TileSelector_SelectedRect.X) ? TileSelector_DraggingOrigin.X : MouseIndex.X),
-                        (int)((MouseIndex.Y >= TileSelector_SelectedRect.Y) ? TileSelector_DraggingOrigin.Y : MouseIndex.Y),
+                        (int)((MouseIndex.X >= TileSelector_DraggingOrigin.X) ? TileSelector_DraggingOrigin.X : MouseIndex.X),
+                        (int)((MouseIndex.Y >= TileSelector_DraggingOrigin.Y) ? TileSelector_DraggingOrigin.Y : MouseIndex.Y),
                         (int)(Math.Abs(TileSelector_DraggingOrigin.X - MouseIndex.X)) + 1,
                         (int)(Math.Abs(TileSelector_DraggingOrigin.Y - MouseIndex.Y)) + 1
                     );
-
-                    Global.StatusBarTextRight = TileSelector_SelectedRect.X + " : " + TileSelector_SelectedRect.Y;
 
                     TileSelector_Rectangle.Margin = new Thickness(TileSelector_SelectedRect.X * Global.TileSize, TileSelector_SelectedRect.Y * Global.TileSize, 0, 0);
                     TileSelector_Rectangle.Width = TileSelector_SelectedRect.Width * Global.TileSize;
@@ -290,6 +289,7 @@ namespace XEditor
                             Width = TileSelector_SelectedRect.Width * Global.TileSize,
                             Height = TileSelector_SelectedRect.Height * Global.TileSize
                         };
+
                         TileSelector_RectangleSelected.SetValue(Panel.ZIndexProperty, 199);
                         EditorGrid.Children.Add(TileSelector_RectangleSelected);
                     }
@@ -302,10 +302,12 @@ namespace XEditor
                     TileSelector_RectangleSelected = null;
                     TileSelector_Dragging = false;
                     TileSelector_SelectedRect = default(Rect);
+                    Global.StatusBarTextLeft = "";
                 }
 
-                if (TileSelector_Dragging)
-                    Global.StatusBarTextRight = "Selecting tiles " + TileSelector_SelectedRect.ToString();
+                Global.StatusBarTextRight = (TileSelector_Dragging) ? "Selecting tiles " + TileSelector_SelectedRect.ToString() : "";
+                if (TileSelector_RectangleSelected != null)
+                    Global.StatusBarTextLeft = "Selected tile area " + TileSelector_SelectedRect.ToString() + " on layer "+Global.TileLayer;
             }
         }
 

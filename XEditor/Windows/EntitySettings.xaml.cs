@@ -96,6 +96,7 @@ namespace XEditor
                 };
 
                 Global.Entities.Add(entity);
+                Global.StatusBarTextLeft = "Created entity '"+entity.Name+"'";
             }
             else
             {
@@ -103,6 +104,7 @@ namespace XEditor
                 editingEntity.Position = new Point(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY));
                 editingEntity.Size = new Point(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY));
                 editingEntity.CustomData = _CustomData;
+                Global.StatusBarTextLeft = "Edited entity '" + EditingEntity.Name + "'";
             }
 
             Close();
@@ -112,6 +114,7 @@ namespace XEditor
         {
             if (EditingEntity != null)
             {
+                Global.StatusBarTextLeft = "Deleted entity '" + EditingEntity.Name + "'";
                 EditingEntity.Destroy();
                 Close();
             }
