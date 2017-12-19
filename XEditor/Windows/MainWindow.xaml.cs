@@ -322,8 +322,8 @@ namespace XEditor
                 if (!DraggingEntity)
                 {
                     highlightingEntities = Global.Entities.FindAll(t =>
-                        (t.Position.X <= Global.SelectorIndex.X && t.Position.X + t.Size.X >= Global.SelectorIndex.X)
-                        && (t.Position.Y <= Global.SelectorIndex.Y && t.Position.Y + t.Size.Y >= Global.SelectorIndex.Y)
+                        (Global.SelectorIndex.X >= t.Position.X && Global.SelectorIndex.X <= t.Position.X + t.Size.X - 1)
+                        && (Global.SelectorIndex.Y >= t.Position.Y && Global.SelectorIndex.Y <= t.Position.Y + t.Size.Y - 1)
                     );
                     Global.StatusBarTextRight = (highlightingEntities.Count > 0) ? highlightingEntities[highlightingEntities.Count - 1].Name : "";
                 }
@@ -364,6 +364,9 @@ namespace XEditor
 
                 if (e.RightButton == MouseButtonState.Pressed)
                 {
+                    foreach (Entity temp in Global.Entities)
+                        temp.Selected = false;
+
                     MouseBusy = true;
                     ContextMenu entityContextMenu = new ContextMenu();
                     entityContextMenu.PlacementTarget = EditorGrid;

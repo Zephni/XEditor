@@ -96,6 +96,7 @@ namespace XEditor
                 };
 
                 Global.Entities.Add(entity);
+                entity.Selected = true;
                 Global.StatusBarTextLeft = "Created entity '"+entity.Name+"'";
             }
             else
