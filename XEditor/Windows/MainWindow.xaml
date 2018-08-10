@@ -33,6 +33,7 @@
                 </MenuItem>
                 <MenuItem Header="Preferences">
                     <MenuItem x:Name="Menu_SaveAsCompressed" Header="Save as compressed" Click="Preferences_SaveAsCompressed" IsCheckable="true" />
+                    <MenuItem x:Name="Menu_DefaultLayers" Header="Update default layers" Click="Preferences_DefaultLayers" />
                 </MenuItem>
             </Menu>
 

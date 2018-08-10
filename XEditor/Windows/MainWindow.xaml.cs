@@ -23,11 +23,19 @@ namespace XEditor
         public Rect TileSelector_SelectedRect;
         public Point TileSelector_DraggingOrigin;
 
-        private bool saveAsCompressed = false;
         public bool SaveAsCompressed
         {
-            get { return saveAsCompressed; }
-            set { saveAsCompressed = value; Menu_SaveAsCompressed.IsChecked = saveAsCompressed; }
+            get {
+                if (!Global.Preferences.KeyExists("SaveAsCompressed"))
+                    Global.Preferences.Write("SaveAsCompressed", "0");
+
+                return (Global.Preferences.Read("SaveAsCompressed") != "0");
+            }
+            set
+            {
+                Menu_SaveAsCompressed.IsChecked = value;
+                Global.Preferences.Write("SaveAsCompressed", (value == false) ? "0" : "1");
+            }
         }
 
         // Constructor
@@ -43,6 +51,17 @@ namespace XEditor
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
             Global.StatusBarTextLeft = "Initialised";
+
+            if(!Global.Preferences.KeyExists("DefaultLayers"))
+            {
+                List<string> defaultLayers = new List<string>() { "Background", "Main", "Foreground" };
+                Global.Preferences.Write("DefaultLayers", String.Join("|", defaultLayers));
+            }
+
+            if (!Global.Preferences.KeyExists("DefaultSelectedLayer"))
+                Global.Preferences.Write("DefaultSelectedLayer", "Main");
+
+            Menu_SaveAsCompressed.IsChecked = SaveAsCompressed;
         }
 
         // Updates
@@ -444,7 +463,13 @@ namespace XEditor
 
             foreach (string layer in layers)
                 Global.AddLayer(layer);
+
             Global.TileLayer = 1;
+            for(int I = 0; I < layers.Count; I++)
+            {
+                if (layers[I] == Global.Preferences.Read("DefaultSelectedLayer"))
+                    Global.TileLayer = I;
+            }
             
             Global.TexturePath = texturePath;
             Global.MapSize = mapSize;
@@ -686,6 +711,12 @@ namespace XEditor
             var menuItem = sender as MenuItem;
             SaveAsCompressed = menuItem.IsChecked;
             Global.StatusBarTextLeft = (SaveAsCompressed) ? "Set save mode to 'Compressed'" : "Set save mode to 'XML'";
+        }
+
+        private void Preferences_DefaultLayers(object sender, RoutedEventArgs e)
+        {
+            DefaultLayers dl = new DefaultLayers();
+            dl.ShowDialog();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -59,6 +59,10 @@
     <Compile Include="Compressor.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EnumMatchToBooleanConverter.cs" />
+    <Compile Include="IniFile.cs" />
+    <Compile Include="Windows\DefaultLayers.xaml.cs">
+      <DependentUpon>DefaultLayers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\EntitySettings.xaml.cs">
       <DependentUpon>EntitySettings.xaml</DependentUpon>
     </Compile>
@@ -74,6 +78,10 @@
     <Compile Include="SaverLoader.cs" />
     <Compile Include="Updater.cs" />
     <Compile Include="Tile.cs" />
+    <Page Include="Windows\DefaultLayers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Windows\EntitySettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

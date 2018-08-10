@@ -35,7 +35,7 @@ namespace XEditor
                 MainWindow.Instance.CloseMap();
                 DataFromDocument(loadedDoc);
                 Global.StatusBarTextLeft = "Opened map '"+file+"'";
-                MainWindow.Instance.SaveAsCompressed = true;
+                //MainWindow.Instance.SaveAsCompressed = true;
             }
             catch(Exception)
             {
@@ -46,7 +46,7 @@ namespace XEditor
                     MainWindow.Instance.CloseMap();
                     DataFromDocument(loadedDoc);
                     Global.StatusBarTextLeft = "Opened map '" + file + "'";
-                    MainWindow.Instance.SaveAsCompressed = false;
+                    //MainWindow.Instance.SaveAsCompressed = false;
                 }
                 catch(Exception)
                 {

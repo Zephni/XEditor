@@ -83,6 +83,8 @@ namespace XEditor
             }
         }
 
+        public static IniFile Preferences = new IniFile(System.AppDomain.CurrentDomain.BaseDirectory + "/XEditorPrefences.ini");
+
         public static List<Tile> CopiedTiles = new List<Tile>();
         public static Point CopiedRectOffset;
 

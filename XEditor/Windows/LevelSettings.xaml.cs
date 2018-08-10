@@ -16,8 +16,12 @@ namespace XEditor
 
             if(Global.State != States.MapOpen)
             {
-                GridSize_X.Text = "64";
-                GridSize_Y.Text = "64";
+                if (!Global.Preferences.KeyExists("LastUsedMapSize"))
+                    Global.Preferences.Write("LastUsedMapSize", "64,64");
+
+                string[] lastUsedMapSize = Global.Preferences.Read("LastUsedMapSize").Split(',');
+                GridSize_X.Text = lastUsedMapSize[0];
+                GridSize_Y.Text = lastUsedMapSize[1];
                 TilesetPath.Text = Global.TexturePath;
                 ApplyButton.Content = "Create new level";
             }
@@ -28,6 +32,9 @@ namespace XEditor
                 TilesetPath.Text = Global.TexturePath;
                 ApplyButton.Content = "Apply changes";
             }
+
+            if (Global.Preferences.KeyExists("LastUsedTileset"))
+                TilesetPath.Text = Global.Preferences.Read("LastUsedTileset");
         }
 
         private void Apply_Click(object sender, RoutedEventArgs e)
@@ -40,7 +47,7 @@ namespace XEditor
 
             if (Global.State != States.MapOpen)
             {
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" });
+                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
             }
             else
             {
@@ -53,7 +60,7 @@ namespace XEditor
                 }
                     
                 // Needs fixing
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string> { "Background", "Main", "Foreground" });
+                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
                 MainWindow.Instance.AddTiles(newTiles);
                 foreach(Entity entity in entityList)
                 {
@@ -61,6 +68,9 @@ namespace XEditor
                     Global.Entities.Add(entity);
                 }
             }
+
+            Global.Preferences.Write("LastUsedTileset", tilesetPath);
+            Global.Preferences.Write("LastUsedMapSize", GridSize_X.Text+","+GridSize_Y.Text);
 
             this.Close();
         }
