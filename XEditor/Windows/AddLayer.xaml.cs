@@ -22,6 +22,13 @@ namespace XEditor
 
             LayerIndexes.SelectedIndex = MainWindow.Instance.TileLayerComboBox.SelectedIndex;
 
+            // Move nessesary tiles up a layer
+            foreach(var tile in Global.Tiles)
+            {
+                if (tile.Layer >= LayerIndexes.SelectedIndex)
+                    tile.Layer += 1;
+            }
+
             LayerName.Focus();
         }
 

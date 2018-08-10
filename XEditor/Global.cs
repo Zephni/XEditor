@@ -264,6 +264,14 @@ namespace XEditor
                 return;
             }
 
+            // Note sure why have to run this more than once, but for now it works
+            for(int Temp = 0; Temp < 10; Temp++)
+                for (int I = 0; I < Global.Tiles.Count; I++)
+                {
+                    if (Global.Tiles[I].Layer == index)
+                        MainWindow.Instance.RemoveTile(Global.Tiles[I]);
+                }
+
             Global.Layers.RemoveAt(index);
             MainWindow.Instance.TileLayerComboBox.Items.RemoveAt(index);
             Global.TileLayer = (index >= 1) ? index-1 : 0;

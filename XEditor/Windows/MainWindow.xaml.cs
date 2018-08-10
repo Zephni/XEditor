@@ -582,7 +582,16 @@ namespace XEditor
 
         private void RemoveLayer_Click(object sender, RoutedEventArgs e)
         {
-            Global.RemoveLayer(MainWindow.Instance.TileLayerComboBox.SelectedIndex);
+            int current = MainWindow.Instance.TileLayerComboBox.SelectedIndex;
+
+            Global.RemoveLayer(current);
+
+            // Move nessesary tiles down a layer
+            foreach (var tile in Global.Tiles)
+            {
+                if (tile.Layer >= current)
+                    tile.Layer -= 1;
+            }
         }
 
         private void MoveLayerUp_Click(object sender, RoutedEventArgs e)
@@ -599,6 +608,15 @@ namespace XEditor
 
             Global.RemoveLayer(current);
             Global.AddLayer(item.ToString(), current-2);
+
+            // Reshuffle
+            foreach (var tile in Global.Tiles)
+            {
+                if (tile.Layer == current)
+                    tile.Layer -= 1;
+                else if (tile.Layer == current - 1)
+                    tile.Layer += 1;
+            }
         }
 
         private void MoveLayerDown_Click(object sender, RoutedEventArgs e)
@@ -615,6 +633,15 @@ namespace XEditor
 
             Global.RemoveLayer(current);
             Global.AddLayer(item.ToString(), current);
+
+            // Reshuffle
+            foreach (var tile in Global.Tiles)
+            {
+                if (tile.Layer == current)
+                    tile.Layer += 1;
+                else if (tile.Layer == current + 1)
+                    tile.Layer -= 1;
+            }
         }
 
         private void File_New_Click(object sender, RoutedEventArgs e)
