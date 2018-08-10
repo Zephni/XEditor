@@ -31,6 +31,9 @@
                 <MenuItem Header="Edit">
                     <MenuItem x:Name="Menu_LevelSettings" Header="Level Settings" Click="LevelSettings_Click" IsEnabled="False" />
                 </MenuItem>
+                <MenuItem Header="Preferences">
+                    <MenuItem x:Name="Menu_SaveAsCompressed" Header="Save as compressed" Click="Preferences_SaveAsCompressed" IsCheckable="true" />
+                </MenuItem>
             </Menu>
 
             <Grid x:Name="EditorContainer" Visibility="Hidden">

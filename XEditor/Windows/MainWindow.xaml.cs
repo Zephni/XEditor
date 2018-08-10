@@ -23,6 +23,13 @@ namespace XEditor
         public Rect TileSelector_SelectedRect;
         public Point TileSelector_DraggingOrigin;
 
+        private bool saveAsCompressed = false;
+        public bool SaveAsCompressed
+        {
+            get { return saveAsCompressed; }
+            set { saveAsCompressed = value; Menu_SaveAsCompressed.IsChecked = saveAsCompressed; }
+        }
+
         // Constructor
         public MainWindow()
         {
@@ -672,6 +679,13 @@ namespace XEditor
         private void File_Exit_Click(object sender, RoutedEventArgs e)
         {
             Global.Command_Exit();
+        }
+
+        private void Preferences_SaveAsCompressed(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            SaveAsCompressed = menuItem.IsChecked;
+            Global.StatusBarTextLeft = (SaveAsCompressed) ? "Set save mode to 'Compressed'" : "Set save mode to 'XML'";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

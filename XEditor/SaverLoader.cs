@@ -13,13 +13,21 @@ namespace XEditor
         public void SaveAs(string file)
         {
             XDocument xDoc = DataAsXDocument();
-            string b64CompressedData = Convert.ToBase64String(Compressor.Zip(xDoc.ToString()));
-            File.WriteAllText(file, b64CompressedData);
+
+            string finalData = "";
+
+            if (MainWindow.Instance.SaveAsCompressed)
+                finalData = Convert.ToBase64String(Compressor.Zip(xDoc.ToString()));
+            else
+                finalData = xDoc.ToString();
+
+            File.WriteAllText(file, finalData);
             Global.StatusBarTextLeft = "Saved map '" + file + "'";
         }
 
         public void Load(string file)
         {
+            // First try to load as compressed
             try
             {
                 string b64CompressedData = File.ReadAllText(file);
@@ -27,10 +35,23 @@ namespace XEditor
                 MainWindow.Instance.CloseMap();
                 DataFromDocument(loadedDoc);
                 Global.StatusBarTextLeft = "Opened map '"+file+"'";
+                MainWindow.Instance.SaveAsCompressed = true;
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                MessageBox.Show("Invalid file type");
+                // If fail, then try to load as plain text
+                try
+                {
+                    XDocument loadedDoc = XDocument.Parse(File.ReadAllText(file));
+                    MainWindow.Instance.CloseMap();
+                    DataFromDocument(loadedDoc);
+                    Global.StatusBarTextLeft = "Opened map '" + file + "'";
+                    MainWindow.Instance.SaveAsCompressed = false;
+                }
+                catch(Exception)
+                {
+                    MessageBox.Show("Invalid file type");
+                }
             }            
         }
 
