@@ -98,7 +98,7 @@ namespace XEditor
                 else if (Global.ToolType == ToolTypes.Entities)
                 {
                     Entities_EditorGrid_MouseUpdates(e);
-                }
+                }            
             }
         }
 
@@ -752,6 +752,26 @@ namespace XEditor
             }
             
             Global.ToolType = toolType;
+        }
+
+        private void EditorGrid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
+
+            // Zooming
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                EditorScale.ScaleX += (e.Delta > 0) ? 0.1f : -0.1f;
+                EditorScale.ScaleY += (e.Delta > 0) ? 0.1f : -0.1f;
+            }
+
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (e.Delta > 0)
+                    EditorScroller.ScrollToVerticalOffset(EditorScroller.VerticalOffset - 16f);
+                else
+                    EditorScroller.ScrollToVerticalOffset(EditorScroller.VerticalOffset + 16f);
+            }
         }
     }
 }

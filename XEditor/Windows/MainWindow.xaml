@@ -92,10 +92,16 @@
                     </StackPanel>
                 </Grid>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+
                 <ScrollViewer x:Name="EditorScroller" Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
-                    <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}">
-                        <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                    </Canvas>
+                    <DockPanel Grid.Column="2" LastChildFill="True">
+                        <DockPanel.LayoutTransform>
+                            <ScaleTransform x:Name="EditorScale" CenterX="0" CenterY="0" ScaleX="1" ScaleY="1" />
+                        </DockPanel.LayoutTransform>
+                        <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}" MouseWheel="EditorGrid_MouseWheel">
+                            <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                        </Canvas>
+                    </DockPanel>
                 </ScrollViewer>
             </Grid>
         </DockPanel>
