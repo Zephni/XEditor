@@ -98,7 +98,7 @@ namespace XEditor
                 else if (Global.ToolType == ToolTypes.Entities)
                 {
                     Entities_EditorGrid_MouseUpdates(e);
-                }            
+                }
             }
         }
 
@@ -761,8 +761,13 @@ namespace XEditor
             // Zooming
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                EditorScale.ScaleX += (e.Delta > 0) ? 0.1f : -0.1f;
-                EditorScale.ScaleY += (e.Delta > 0) ? 0.1f : -0.1f;
+                System.Windows.Point mousePos = e.GetPosition(EditorGrid);
+
+                EditorScale.ScaleX += (e.Delta > 0) ? 0.01f : -0.01f;
+                EditorScale.ScaleY += (e.Delta > 0) ? 0.01f : -0.01f;
+
+                EditorScroller.ScrollToHorizontalOffset(mousePos.X - (EditorScroller.ViewportWidth / 2));
+                EditorScroller.ScrollToVerticalOffset(mousePos.Y - (EditorScroller.ViewportHeight / 2));
             }
 
             if (!Keyboard.IsKeyDown(Key.LeftCtrl))
