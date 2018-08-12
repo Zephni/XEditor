@@ -61,6 +61,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="EnumMatchToBooleanConverter.cs" />
     <Compile Include="IniFile.cs" />
+    <Compile Include="RecentFilesController.cs" />
     <Compile Include="Windows\DefaultLayers.xaml.cs">
       <DependentUpon>DefaultLayers.xaml</DependentUpon>
     </Compile>

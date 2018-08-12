@@ -452,20 +452,30 @@ namespace XEditor
             DialogWindowOpen = false;
         }
         
-        public static void Command_Open()
+        public static void Command_Open(string filePath = "")
         {
             if (DialogWindowOpen)
                 return;
 
-            DialogWindowOpen = true;
-            OpenFileDialog sfd = new OpenFileDialog();
-            sfd.ShowDialog(MainWindow.Instance);
+            if(filePath.Length == 0)
+            {
+                DialogWindowOpen = true;
+                OpenFileDialog sfd = new OpenFileDialog();
+                sfd.ShowDialog(MainWindow.Instance);
 
-            if (sfd.FileName != "")
+                if (sfd.FileName != "")
+                {
+                    filePath = sfd.FileName;
+                    RecentFilesController.AddFile(sfd.FileName);
+                }
+            }
+
+            if (filePath != "")
             {
                 SaverLoader sl = new SaverLoader();
-                sl.Load(sfd.FileName);
-                Global.OpenFilePath = sfd.FileName;
+                sl.Load(filePath);
+                Global.OpenFilePath = filePath;
+                RecentFilesController.AddFile(filePath);
             }
             Global.Unsaved = false;
             DialogWindowOpen = false;
@@ -528,6 +538,8 @@ namespace XEditor
                 sl.SaveAs(sfd.FileName);
                 Global.Unsaved = false;
                 Global.OpenFilePath = sfd.FileName;
+
+                RecentFilesController.AddFile(sfd.FileName);
             }
 
             DialogWindowOpen = false;

@@ -82,6 +82,55 @@ namespace XEditor
                 Global.Preferences.Write("DefaultSelectedLayer", "Main");
 
             Menu_SaveAsCompressed.IsChecked = SaveAsCompressed;
+
+            LoadRecentFiles();
+        }
+
+        private bool HasClearOption = false;
+        public void LoadRecentFiles()
+        {
+            Menu_RecentFiles.IsEnabled = false;
+
+            Menu_RecentFiles.Items.Clear();
+
+            List<string> recentFiles = RecentFilesController.GetRecentFiles();
+            recentFiles.Reverse();
+
+            foreach (var item in recentFiles)
+            {
+                MenuItem newMenuItem = new MenuItem();
+                newMenuItem.Header = item;
+                newMenuItem.Click += LoadRecentFile;
+                Menu_RecentFiles.Items.Add(newMenuItem);
+            }
+
+            if(Menu_RecentFiles.Items.Count > 0)
+            {
+                HasClearOption = true;
+                Menu_RecentFiles.IsEnabled = true;
+
+                MenuItem clearRecentMenuItem = new MenuItem();
+                clearRecentMenuItem.Header = "Clear";
+                clearRecentMenuItem.Click += ClearRecentMenuItem_Click;
+                Menu_RecentFiles.Items.Add(clearRecentMenuItem);
+            }
+
+            if(Menu_RecentFiles.Items.Count == 0)
+            {
+                HasClearOption = false;
+                Menu_RecentFiles.IsEnabled = false;
+            }
+        }
+
+        private void ClearRecentMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            RecentFilesController.Clear();
+        }
+
+        private void LoadRecentFile(object sender, RoutedEventArgs e)
+        {
+            var item = (MenuItem)sender;
+            Global.Command_Open(item.Header.ToString());
         }
 
         bool resetScrollOffset = false;
