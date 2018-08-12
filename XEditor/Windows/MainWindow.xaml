@@ -97,12 +97,15 @@
 
                 <Grid Grid.Column="2" >
                     <ScrollViewer local:AdvancedZooming.KeepInCenter="True" x:Name="EditorScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                        <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}" MouseWheel="EditorGrid_MouseWheel" MouseDown="Window_MouseDown">
-                            <Canvas.LayoutTransform>
+                        <Grid x:Name="EditorMargin">
+                            <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="EditorScale" CenterX="0" CenterY="0" ScaleX="1" ScaleY="1" />
-                            </Canvas.LayoutTransform>
-                            <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
-                        </Canvas>
+                            </Grid.LayoutTransform>
+                            <Canvas  Name="EditorGrid" Background="{StaticResource GridBrush}" MouseWheel="EditorGrid_MouseWheel" MouseDown="Window_MouseDown">
+                                <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
+                            </Canvas>
+                        </Grid>
+                        
                     </ScrollViewer>
                 </Grid>
             </Grid>

@@ -35,8 +35,8 @@ namespace XEditor
             {
                 scale = value;
                 
-                if (scale < 0.2f) scale = 0.2f;
-                else if (scale > 10) scale = 10;
+                if (scale < 0.5f) scale = 0.5f;
+                else if (scale > 4) scale = 4;
 
                 EditorScale.ScaleX = scale;
                 EditorScale.ScaleY = scale;
@@ -91,8 +91,8 @@ namespace XEditor
         {
             if(resetScrollOffset && EditorScroller.HorizontalOffset > 0)
             {
-                EditorScroller.ScrollToHorizontalOffset(0);
-                EditorScroller.ScrollToVerticalOffset(0);
+                EditorScroller.ScrollToHorizontalOffset(500);
+                EditorScroller.ScrollToVerticalOffset(500);
                 resetScrollOffset = false;
             }
             
@@ -120,18 +120,18 @@ namespace XEditor
             {
                 if (e.MiddleButton == MouseButtonState.Pressed)
                 {
-                    EditorScroller.ScrollToHorizontalOffset((e.GetPosition(EditorGrid).X * Scale) - (EditorScroller.ActualWidth / 2) + 23);
-                    EditorScroller.ScrollToVerticalOffset((e.GetPosition(EditorGrid).Y * Scale) - (EditorScroller.ActualHeight / 2) + 23);
+                    EditorScroller.ScrollToHorizontalOffset((e.GetPosition(EditorMargin).X * Scale) - (EditorScroller.ActualWidth / 2) + 23);
+                    EditorScroller.ScrollToVerticalOffset((e.GetPosition(EditorMargin).Y * Scale) - (EditorScroller.ActualHeight / 2) + 23);
 
                     Point temp = EditorScroller.PointToScreen(new Point(-23 + EditorScroller.RenderSize.Width/2, -23 + EditorScroller.RenderSize.Height/2));
 
                     // If mouse around edges
                     Point mousePos = Mouse.GetPosition(this);
                     Point mousePosScreen = PointToScreen(mousePos);
-                    if (e.GetPosition(EditorGrid).X < EditorScroller.RenderSize.Width / 2) temp.X = mousePosScreen.X;
-                    if (e.GetPosition(EditorGrid).Y < EditorScroller.RenderSize.Height / 2) temp.Y = mousePosScreen.Y;
-                    if (e.GetPosition(EditorGrid).X > EditorGrid.Width - EditorScroller.RenderSize.Width / 2) temp.X = mousePosScreen.X;
-                    if (e.GetPosition(EditorGrid).Y > EditorGrid.Height - EditorScroller.RenderSize.Height / 2) temp.Y = mousePosScreen.Y;
+                    if (e.GetPosition(EditorMargin).X < (EditorScroller.RenderSize.Width / 2) * (1 - Scale)) temp.X = mousePosScreen.X;
+                    if (e.GetPosition(EditorMargin).Y < (EditorScroller.RenderSize.Height / 2) * (1 - Scale)) temp.Y = mousePosScreen.Y;
+                    if (e.GetPosition(EditorMargin).X > EditorMargin.Width - (EditorScroller.RenderSize.Width / 2) * (1 - Scale)) temp.X = mousePosScreen.X;
+                    if (e.GetPosition(EditorMargin).Y > EditorMargin.Height - (EditorScroller.RenderSize.Height / 2) * (1 - Scale)) temp.Y = mousePosScreen.Y;
 
                     SetCursorPos((int)temp.X, (int)temp.Y);
                 }
@@ -526,6 +526,8 @@ namespace XEditor
             Global.State = States.MapOpen;
             Global.ToolType = ToolTypes.TilePlacer;
 
+            EditorMargin.Width = EditorGrid.Width + 1000;
+            EditorMargin.Height = EditorGrid.Height + 1000;
             resetScrollOffset = true;
         }
 
