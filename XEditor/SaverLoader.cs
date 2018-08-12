@@ -111,7 +111,7 @@ namespace XEditor
                 return;
 
             string[] mapSize = xDoc.Root.Element("Config").Element("MapSize").Value.Split(',');
-            Point mapSizep = new Point(Convert.ToInt16(mapSize[0]), Convert.ToInt16(mapSize[1]));
+            Point2D mapSizep = new Point2D(Convert.ToInt16(mapSize[0]), Convert.ToInt16(mapSize[1]));
 
             List<string> layers = new List<string>();
             foreach(XElement xEl in xDoc.Root.Element("Config").Elements("Layers").Descendants())
@@ -126,8 +126,8 @@ namespace XEditor
 
                 Tile tile = new Tile
                 {
-                    TilesetLocation = new Point(Convert.ToInt16(source[0]), Convert.ToInt16(source[1])),
-                    Location = new Point(Convert.ToInt16(location[0]), Convert.ToInt16(location[1])),
+                    TilesetLocation = new Point2D(Convert.ToInt16(source[0]), Convert.ToInt16(source[1])),
+                    Location = new Point2D(Convert.ToInt16(location[0]), Convert.ToInt16(location[1])),
                     Layer = Convert.ToInt16(location[2])
                 };
 
@@ -142,8 +142,8 @@ namespace XEditor
                 Entity entity = new Entity
                 {
                     Name = xEl.Element("Name").Value,
-                    Position = new Point(Convert.ToInt16(location[0]), Convert.ToInt16(location[1])),
-                    Size = new Point(Convert.ToInt16(size[0]), Convert.ToInt16(size[1])),
+                    Position = new Point2D(Convert.ToInt16(location[0]), Convert.ToInt16(location[1])),
+                    Size = new Point2D(Convert.ToInt16(size[0]), Convert.ToInt16(size[1])),
                     CustomData = xEl.Element("CustomData").Value
                 };
 

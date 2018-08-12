@@ -90,8 +90,8 @@ namespace XEditor
                 Entity entity = new Entity
                 {
                     Name = _EntityName,
-                    Position = new Point(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY)),
-                    Size = new Point(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY)),
+                    Position = new Point2D(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY)),
+                    Size = new Point2D(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY)),
                     CustomData = _CustomData
                 };
 
@@ -102,8 +102,8 @@ namespace XEditor
             else
             {
                 editingEntity.Name = _EntityName;
-                editingEntity.Position = new Point(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY));
-                editingEntity.Size = new Point(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY));
+                editingEntity.Position = new Point2D(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY));
+                editingEntity.Size = new Point2D(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY));
                 editingEntity.CustomData = _CustomData;
                 Global.StatusBarTextLeft = "Edited entity '" + EditingEntity.Name + "'";
             }

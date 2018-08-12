@@ -25,8 +25,8 @@ namespace XEditor
             }
         }
 
-        private Point location;
-        public Point Location
+        private Point2D location;
+        public Point2D Location
         {
             get { return location; }
             set
@@ -36,8 +36,8 @@ namespace XEditor
             }
         }
 
-        private Point tilesetLocation;
-        public Point TilesetLocation
+        private Point2D tilesetLocation;
+        public Point2D TilesetLocation
         {
             get { return tilesetLocation; }
             set {

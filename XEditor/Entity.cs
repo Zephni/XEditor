@@ -56,8 +56,8 @@ namespace XEditor
             }
         }
 
-        private Point position;
-        public Point Position
+        private Point2D position;
+        public Point2D Position
         {
             get { return position; }
             set
@@ -82,8 +82,8 @@ namespace XEditor
             }
         }
 
-        private Point size;
-        public Point Size
+        private Point2D size;
+        public Point2D Size
         {
             get { return size; }
             set

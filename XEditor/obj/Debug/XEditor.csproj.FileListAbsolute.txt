@@ -65,3 +65,5 @@ C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\
 C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\XEditor.pdb
 C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\DefaultLayers.g.cs
 C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\DefaultLayers.baml
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\DefaultLayers.g.cs
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\DefaultLayers.baml

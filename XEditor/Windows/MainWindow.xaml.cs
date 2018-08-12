@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,17 +12,36 @@ namespace XEditor
 {
     public partial class MainWindow : Window
     {
+        [DllImport("User32.dll")]
+        private static extern bool SetCursorPos(int X, int Y);
+
         // Properties
         public static MainWindow Instance;
         public bool MouseBusy = false;
         public List<Entity> highlightingEntities;
         public bool DraggingEntity;
-        public Point DraggingOffset;
+        public Point2D DraggingOffset;
         public bool TileSelector_Dragging = false;
         public Rectangle TileSelector_Rectangle;
         public Rectangle TileSelector_RectangleSelected;
         public Rect TileSelector_SelectedRect;
-        public Point TileSelector_DraggingOrigin;
+        public Point2D TileSelector_DraggingOrigin;
+
+        private float scale = 1;
+        public float Scale
+        {
+            get { return scale; }
+            set
+            {
+                scale = value;
+                
+                if (scale < 0.2f) scale = 0.2f;
+                else if (scale > 10) scale = 10;
+
+                EditorScale.ScaleX = scale;
+                EditorScale.ScaleY = scale;
+            }
+        }
 
         public bool SaveAsCompressed
         {
@@ -64,9 +84,18 @@ namespace XEditor
             Menu_SaveAsCompressed.IsChecked = SaveAsCompressed;
         }
 
+        bool resetScrollOffset = false;
+
         // Updates
         public void Update()
         {
+            if(resetScrollOffset && EditorScroller.HorizontalOffset > 0)
+            {
+                EditorScroller.ScrollToHorizontalOffset(0);
+                EditorScroller.ScrollToVerticalOffset(0);
+                resetScrollOffset = false;
+            }
+            
             MouseUpdates(Global.MouseEventArgs);
 
             // File menu
@@ -84,9 +113,30 @@ namespace XEditor
 
         public void MouseUpdates(MouseEventArgs e)
         {
+            if (e == null)
+                return;
+
             if (!MouseBusy && Global.State == States.MapOpen)
             {
-                if(Global.ToolType == ToolTypes.TilePlacer)
+                if (e.MiddleButton == MouseButtonState.Pressed)
+                {
+                    EditorScroller.ScrollToHorizontalOffset((e.GetPosition(EditorGrid).X * Scale) - (EditorScroller.ActualWidth / 2) + 23);
+                    EditorScroller.ScrollToVerticalOffset((e.GetPosition(EditorGrid).Y * Scale) - (EditorScroller.ActualHeight / 2) + 23);
+
+                    Point temp = EditorScroller.PointToScreen(new Point(-23 + EditorScroller.RenderSize.Width/2, -23 + EditorScroller.RenderSize.Height/2));
+
+                    // If mouse around edges
+                    Point mousePos = Mouse.GetPosition(this);
+                    Point mousePosScreen = PointToScreen(mousePos);
+                    if (e.GetPosition(EditorGrid).X < EditorScroller.RenderSize.Width / 2) temp.X = mousePosScreen.X;
+                    if (e.GetPosition(EditorGrid).Y < EditorScroller.RenderSize.Height / 2) temp.Y = mousePosScreen.Y;
+                    if (e.GetPosition(EditorGrid).X > EditorGrid.Width - EditorScroller.RenderSize.Width / 2) temp.X = mousePosScreen.X;
+                    if (e.GetPosition(EditorGrid).Y > EditorGrid.Height - EditorScroller.RenderSize.Height / 2) temp.Y = mousePosScreen.Y;
+
+                    SetCursorPos((int)temp.X, (int)temp.Y);
+                }
+
+                if (Global.ToolType == ToolTypes.TilePlacer)
                 {
                     TilePlacer_EditorGrid_MouseUpdates(e);
                     TilePlacer_Tileset_MouseUpdates(e);
@@ -112,7 +162,7 @@ namespace XEditor
                 ThisSelector.Stroke = new SolidColorBrush(Colors.Black);
 
                 ThisSelector.Visibility = Visibility.Visible;
-                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+                Global.SelectorIndex = new Point2D((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
 
                 if (Global.SelectorMode == SelectorModes.Normal)
                 {
@@ -127,14 +177,14 @@ namespace XEditor
 
                     if (e.LeftButton == MouseButtonState.Pressed)
                     {
-                        Global.SelectorHoldIndex = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
+                        Global.SelectorHoldIndex = new Point2D(Global.SelectorIndex.X, Global.SelectorIndex.Y);
                         Global.SelectorMode = SelectorModes.SelectingArea;
                         Global.ActionType = ActionTypes.AddingTiles;
                     }
 
                     if (e.RightButton == MouseButtonState.Pressed)
                     {
-                        Global.SelectorHoldIndex = new Point(Global.SelectorIndex.X, Global.SelectorIndex.Y);
+                        Global.SelectorHoldIndex = new Point2D(Global.SelectorIndex.X, Global.SelectorIndex.Y);
                         Global.SelectorMode = SelectorModes.SelectingArea;
                         Global.ActionType = ActionTypes.RemovingTiles;
                     }
@@ -177,7 +227,7 @@ namespace XEditor
                                 int X = Global.WrapValue(x - LeftMost, 0, Global.SelectedTiles.GetLength(0));
                                 int Y = Global.WrapValue(y - TopMost, 0, Global.SelectedTiles.GetLength(1));
                                 Tile tile = Global.SelectedTiles[X, Y].DeepCopy();
-                                tile.Location = new Point(x, y);
+                                tile.Location = new Point2D(x, y);
                                 tile.Layer = Global.TileLayer;
 
                                 // Remove old if exists
@@ -222,7 +272,7 @@ namespace XEditor
             if (TilesetGrid.IsMouseOver)
             {
                 ThisSelector.Visibility = Visibility.Visible;
-                Global.TileSelectorIndex = new Point((int)(e.GetPosition(TilesetGrid).X / Global.TileSize), (int)(e.GetPosition(TilesetGrid).Y / Global.TileSize));
+                Global.TileSelectorIndex = new Point2D((int)(e.GetPosition(TilesetGrid).X / Global.TileSize), (int)(e.GetPosition(TilesetGrid).Y / Global.TileSize));
 
                 if (Global.TileSelectorMode == SelectorModes.Normal)
                 {
@@ -234,7 +284,7 @@ namespace XEditor
 
                     if (e.LeftButton == MouseButtonState.Pressed)
                     {
-                        Global.TileSelectorHoldIndex = new Point(Global.TileSelectorIndex.X, Global.TileSelectorIndex.Y);
+                        Global.TileSelectorHoldIndex = new Point2D(Global.TileSelectorIndex.X, Global.TileSelectorIndex.Y);
                         Global.TileSelectorMode = SelectorModes.SelectingArea;
                     }
                 }
@@ -268,12 +318,12 @@ namespace XEditor
         {
             if (EditorGrid.IsMouseOver)
             {
-                Point MouseIndex = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
+                Point2D MouseIndex = new Point2D((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
 
                 if (!TileSelector_Dragging && e.LeftButton == MouseButtonState.Pressed)
                 {
                     TileSelector_Dragging = true;
-                    TileSelector_DraggingOrigin = new Point((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
+                    TileSelector_DraggingOrigin = new Point2D((int)(e.GetPosition(EditorGrid).X / Global.TileSize), (int)(e.GetPosition(EditorGrid).Y / Global.TileSize));
                     TileSelector_Rectangle = new Rectangle {
                         Fill = Brushes.LightSkyBlue,
                         Stroke = Brushes.CornflowerBlue,
@@ -343,7 +393,7 @@ namespace XEditor
         {
             if (EditorGrid.IsMouseOver)
             {
-                Global.SelectorIndex = new Point((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+                Global.SelectorIndex = new Point2D((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
 
                 if (!DraggingEntity)
                 {
@@ -364,7 +414,7 @@ namespace XEditor
                     {
                         Entity entity = highlightingEntities[highlightingEntities.Count - 1];
                         entity.Selected = true;
-                        DraggingOffset = new Point(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
+                        DraggingOffset = new Point2D(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
                         DraggingEntity = true;
                     }
                 }
@@ -372,7 +422,7 @@ namespace XEditor
                 if(DraggingEntity)
                 {
                     highlightingEntities[highlightingEntities.Count - 1].Selected = true;
-                    highlightingEntities[highlightingEntities.Count-1].Position = new Point(Global.SelectorIndex.X - DraggingOffset.X, Global.SelectorIndex.Y - DraggingOffset.Y);
+                    highlightingEntities[highlightingEntities.Count-1].Position = new Point2D(Global.SelectorIndex.X - DraggingOffset.X, Global.SelectorIndex.Y - DraggingOffset.Y);
 
                     if (e.LeftButton == MouseButtonState.Released)
                     {
@@ -454,7 +504,7 @@ namespace XEditor
         }
 
         // Methods
-        public void NewMap(Point mapSize, string texturePath, List<string> layers)
+        public void NewMap(Point2D mapSize, string texturePath, List<string> layers)
         {
             CloseMap();
             Global.Unsaved = true;
@@ -475,6 +525,8 @@ namespace XEditor
             Global.MapSize = mapSize;
             Global.State = States.MapOpen;
             Global.ToolType = ToolTypes.TilePlacer;
+
+            resetScrollOffset = true;
         }
 
         public void CloseMap()
@@ -509,7 +561,7 @@ namespace XEditor
         public Tile CreateTileObject(int tilesetPosX, int tilesetPosY)
         {
             Tile tile = new Tile {
-                TilesetLocation = new Point(tilesetPosX, tilesetPosY)
+                TilesetLocation = new Point2D(tilesetPosX, tilesetPosY)
             };
 
             return tile;
@@ -756,26 +808,14 @@ namespace XEditor
 
         private void EditorGrid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            e.Handled = true;
-
             // Zooming
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                System.Windows.Point mousePos = e.GetPosition(EditorGrid);
+                e.Handled = true;
 
-                EditorScale.ScaleX += (e.Delta > 0) ? 0.01f : -0.01f;
-                EditorScale.ScaleY += (e.Delta > 0) ? 0.01f : -0.01f;
+                Scale += (e.Delta > 0) ? 0.1f : -0.1f;
 
-                EditorScroller.ScrollToHorizontalOffset(mousePos.X - (EditorScroller.ViewportWidth / 2));
-                EditorScroller.ScrollToVerticalOffset(mousePos.Y - (EditorScroller.ViewportHeight / 2));
-            }
-
-            if (!Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                if (e.Delta > 0)
-                    EditorScroller.ScrollToVerticalOffset(EditorScroller.VerticalOffset - 16f);
-                else
-                    EditorScroller.ScrollToVerticalOffset(EditorScroller.VerticalOffset + 16f);
+                Global.StatusBarTextLeft = "Zoomed to x" + Scale.ToString();
             }
         }
     }

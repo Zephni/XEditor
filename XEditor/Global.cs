@@ -86,7 +86,7 @@ namespace XEditor
         public static IniFile Preferences = new IniFile(System.AppDomain.CurrentDomain.BaseDirectory + "/XEditorPrefences.ini");
 
         public static List<Tile> CopiedTiles = new List<Tile>();
-        public static Point CopiedRectOffset;
+        public static Point2D CopiedRectOffset;
 
         private static ToolTypes toolType;
         public static ToolTypes ToolType
@@ -170,13 +170,13 @@ namespace XEditor
         public static List<string> Layers;
 
         public static SelectorModes SelectorMode;
-        public static Point SelectorIndex;
-        public static Point SelectorHoldIndex;
+        public static Point2D SelectorIndex;
+        public static Point2D SelectorHoldIndex;
         public static Rect SelectorSelection;
 
         public static SelectorModes TileSelectorMode;
-        public static Point TileSelectorIndex;
-        public static Point TileSelectorHoldIndex;
+        public static Point2D TileSelectorIndex;
+        public static Point2D TileSelectorHoldIndex;
         public static Rect TileSelectorSelection;
 
         public static string StatusBarTextLeft
@@ -208,8 +208,8 @@ namespace XEditor
         }
         public static Tile[,] SelectedTiles;
 
-        private static Point mapSize;
-        public static Point MapSize
+        private static Point2D mapSize;
+        public static Point2D MapSize
         {
             get { return mapSize; }
             set {
@@ -290,7 +290,7 @@ namespace XEditor
             return Global.Tiles.Find(t => t.Location.X == x && t.Location.Y == y && t.Layer == z);
         }
 
-        public static Tile GetTile(Point location, int z)
+        public static Tile GetTile(Point2D location, int z)
         {
             return Global.GetTile(location.X, location.Y, z);
         }
@@ -380,7 +380,7 @@ namespace XEditor
 
         public static void Command_CopyTiles(Rect rect, int? layer)
         {
-            CopiedRectOffset = new Point(Convert.ToInt16(rect.X), Convert.ToInt16(rect.Y));
+            CopiedRectOffset = new Point2D(Convert.ToInt16(rect.X), Convert.ToInt16(rect.Y));
 
             CopiedTiles = Global.Tiles.FindAll(t =>
                 t.Location.X >= rect.X
@@ -411,7 +411,7 @@ namespace XEditor
             {
                 Tile newTile = tile.DeepCopy();
 
-                newTile.Location = new Point(
+                newTile.Location = new Point2D(
                     Convert.ToInt16((tile.Location.X - CopiedRectOffset.X) + rect.X),
                     Convert.ToInt16((tile.Location.Y - CopiedRectOffset.Y) + rect.Y)
                 );

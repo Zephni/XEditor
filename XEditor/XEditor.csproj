@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AdvanceZooming.cs" />
     <Compile Include="Compressor.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EnumMatchToBooleanConverter.cs" />

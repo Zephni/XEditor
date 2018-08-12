@@ -1,11 +1,11 @@
 ﻿namespace XEditor
 {
-   public struct Point
+   public struct Point2D
     {
         public int X;
         public int Y;
 
-        public Point(int x, int y)
+        public Point2D(int x, int y)
         {
             X = x;
             Y = y;

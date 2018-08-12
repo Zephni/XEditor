@@ -47,7 +47,7 @@ namespace XEditor
 
             if (Global.State != States.MapOpen)
             {
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
+                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
             }
             else
             {
@@ -60,7 +60,7 @@ namespace XEditor
                 }
                     
                 // Needs fixing
-                MainWindow.Instance.NewMap(new Point(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
+                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
                 MainWindow.Instance.AddTiles(newTiles);
                 foreach(Entity entity in entityList)
                 {

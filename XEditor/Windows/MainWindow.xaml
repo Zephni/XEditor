@@ -83,26 +83,28 @@
                         </Grid>
 
                         <Label Margin="0,8,0,0">Tileset</Label>
+                        <Grid x:Name="GridContainer">
                         <ScrollViewer Background="Gray" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" Height="260" Margin="12,6,12,12">
                             <Grid x:Name="TilesetGrid" Background="White">
                                 <Rectangle Name="TilesetSelector" Panel.ZIndex="10" Width="16" Height="16" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
                                 <Rectangle Name="TilesetSelectedArea" Panel.ZIndex="9" Width="32" Height="32" Stroke="White" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"></Rectangle>
                             </Grid>
                         </ScrollViewer>
+                        </Grid>
                     </StackPanel>
                 </Grid>
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
 
-                <ScrollViewer x:Name="EditorScroller" Grid.Column="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" >
-                    <DockPanel Grid.Column="2" LastChildFill="True" MouseWheel="EditorGrid_MouseWheel">
-                        <DockPanel.LayoutTransform>
-                            <ScaleTransform x:Name="EditorScale" CenterX="0" CenterY="0" ScaleX="1" ScaleY="1" />
-                        </DockPanel.LayoutTransform>
-                        <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}">
+                <Grid Grid.Column="2" >
+                    <ScrollViewer local:AdvancedZooming.KeepInCenter="True" x:Name="EditorScroller" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                        <Canvas Name="EditorGrid" Background="{StaticResource GridBrush}" MouseWheel="EditorGrid_MouseWheel" MouseDown="Window_MouseDown">
+                            <Canvas.LayoutTransform>
+                                <ScaleTransform x:Name="EditorScale" CenterX="0" CenterY="0" ScaleX="1" ScaleY="1" />
+                            </Canvas.LayoutTransform>
                             <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
                         </Canvas>
-                    </DockPanel>
-                </ScrollViewer>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
         </DockPanel>
         <StatusBar Height="24" VerticalAlignment="Bottom" Padding="4,0,4,0" >
