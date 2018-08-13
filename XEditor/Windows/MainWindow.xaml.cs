@@ -711,8 +711,14 @@ namespace XEditor
 
         private void AddLayer_Click(object sender, RoutedEventArgs e)
         {
-            AddLayer addLayer = new AddLayer();
+            AddEditLayer addLayer = new AddEditLayer(AddEditLayer.Mode.Create);
             addLayer.ShowDialog();
+        }
+
+        private void EditLayer_Click(object sender, RoutedEventArgs e)
+        {
+            AddEditLayer editLayer = new AddEditLayer(AddEditLayer.Mode.Edit);
+            editLayer.ShowDialog();
         }
 
         private void RemoveLayer_Click(object sender, RoutedEventArgs e)
