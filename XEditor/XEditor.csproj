@@ -73,6 +73,9 @@
       <DependentUpon>AddLayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Global.cs" />
+    <Compile Include="Windows\LayerTextInputDialogue.xaml.cs">
+      <DependentUpon>LayerTextInputDialogue.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\LevelSettings.xaml.cs">
       <DependentUpon>LevelSettings.xaml</DependentUpon>
     </Compile>
@@ -89,6 +92,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\AddLayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\LayerTextInputDialogue.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

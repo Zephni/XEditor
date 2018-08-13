@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XEditor"
         mc:Ignorable="d"
-        Title="Default layers" Height="250.347" Width="480">
+        Title="Default layers" Height="273.106" Width="480">
     <Grid Margin="4, 4, 4, 4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -17,12 +17,32 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.Row="0" Margin="4,0,4,0">Default layers (Will only effect new levels)</Label>
+        <Label Grid.Column="0" Grid.Row="0" Margin="4,0,4,0">Default layers (Right click to make changes)</Label>
 
-        <TextBox x:Name="Layers" Grid.Column="0" Grid.Row="1" Margin="4,4,4,4" TextWrapping="Wrap" AcceptsReturn="True"></TextBox>
+        <ListBox x:Name="Layers" Grid.Column="0" Grid.Row="1" Margin="4" MouseDown="Layers_MouseDown">
+            <ListBox.Resources>
+
+                <!--Defines a context menu-->
+                <ContextMenu x:Key="MyElementMenu">
+                    <MenuItem Header="Add" Click="ContextMenu_Add" />
+                    <MenuItem Header="Edit" Click="ContextMenu_Edit" />
+                    <MenuItem Header="Delete" Click="ContextMenu_Delete" />
+                    <MenuItem Header="Move up" Click="ContextMenu_MoveUp" />
+                    <MenuItem Header="Move down" Click="ContextMenu_MoveDown" />
+                </ContextMenu>
+
+                <!--Sets a context menu for each ListBoxItem in the current ListBox-->
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="ContextMenu" Value="{StaticResource MyElementMenu}"/>
+                </Style>
+
+            </ListBox.Resources>
+
+        </ListBox>
+
         <Grid Grid.Column="0" Grid.Row="2">
             <TextBlock Margin="4,4,4,4">Default selected</TextBlock>
-            <TextBox x:Name="DefaultLayer" Margin="102,4,4,4" Text="Main"></TextBox>            
+            <ComboBox x:Name="DefaultLayer" Margin="102,4,4,4" Text="Main"></ComboBox>            
         </Grid>
         
         <Button Content="Update default layers" Grid.Column="0" Grid.Row="3"  Margin="4,4,4,4" Click="UpdateDefaultLayers" />
