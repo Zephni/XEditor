@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\obj\Release\
+C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Release\
 XEditor
 none
 false
 TRACE
-C:\Users\craig.dennis\Documents\Visual Studio 2015\Projects\XEditor\XEditor\App.xaml
-31324963539
+C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\App.xaml
+6-1428524524
 
-15-1210759915
+22-17536840
 14-1787462521
-Windows\AddLayer.xaml;Windows\LevelSettings.xaml;Windows\MainWindow.xaml;
+Windows\DefaultLayers.xaml;Windows\EntitySettings.xaml;Windows\AddLayer.xaml;Windows\LayerTextInputDialogue.xaml;Windows\LevelSettings.xaml;Windows\MainWindow.xaml;
 
 False
 
