@@ -30,7 +30,7 @@ namespace XEditor
             UpdateChanges();
         }
 
-        private void UpdateDefaultLayers(object sender, RoutedEventArgs e)
+        private void UpdateDefaultLayers()
         {
             List<string> layerStrList = new List<string>();
             foreach (var item in Layers.Items)
@@ -66,6 +66,7 @@ namespace XEditor
 
             LayerTextInputDialogue ltid = new LayerTextInputDialogue(true, "NewLayer");
             ltid.Show();
+            UpdateDefaultLayers();
         }
         private void ContextMenu_Edit(object sender, RoutedEventArgs e)
         {
@@ -74,6 +75,7 @@ namespace XEditor
 
             LayerTextInputDialogue ltid = new LayerTextInputDialogue(false, Layers.SelectedItem.ToString());
             ltid.Show();
+            UpdateDefaultLayers();
         }
         private void ContextMenu_Delete(object sender, RoutedEventArgs e)
         {
@@ -89,6 +91,7 @@ namespace XEditor
 
             Layers.Items.Remove(Layers.SelectedItem);
             UpdateChanges();
+            UpdateDefaultLayers();
         }
         private void ContextMenu_MoveUp(object sender, RoutedEventArgs e)
         {
@@ -121,6 +124,8 @@ namespace XEditor
             Layers.Items.Insert(newIndex, selected);
             // Restore selection
             Layers.SelectedIndex = newIndex;
+
+            UpdateDefaultLayers();
         }
 
         private void Layers_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

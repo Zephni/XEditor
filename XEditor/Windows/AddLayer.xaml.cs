@@ -50,7 +50,27 @@ namespace XEditor
 
         private void Create_Click(object sender, RoutedEventArgs e)
         {
-            if(CurrentMode == Mode.Create)
+            if (LayerName.Text.Length == 0)
+            {
+                MessageBoxButton mbb = MessageBoxButton.OK;
+                MessageBox.Show("A layer must be at least 1 character", "Can't do that!", mbb);
+                return;
+            }
+
+            if (LayerName.Text.Contains(' '))
+            {
+                MessageBoxButton mbb = MessageBoxButton.OK;
+                MessageBox.Show("A layer cannot contain any spaces", "Can't do that!", mbb);
+                return;
+            }
+
+            if (OriginalName != LayerName.Text && Global.Layers.Contains(LayerName.Text))
+            {
+                MessageBox.Show("A layer with this name already exists");
+                return;
+            }
+
+            if (CurrentMode == Mode.Create)
             {
                 // Move nessesary tiles up a layer
                 foreach (var tile in Global.Tiles)
@@ -65,8 +85,8 @@ namespace XEditor
             else if(CurrentMode == Mode.Edit)
             {
                 var index = MainWindow.Instance.TileLayerComboBox.SelectedIndex;
-                Global.RemoveLayer(OriginalName);
-                Global.AddLayer(LayerName.Text, index);
+                Global.Layers.RemoveAt(index);
+                Global.Layers.Insert((index - 1 >= 0) ? index-1 : 0, LayerName.Text);
                 this.Close();
             }
         }

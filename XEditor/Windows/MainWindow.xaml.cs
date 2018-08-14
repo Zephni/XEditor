@@ -27,6 +27,8 @@ namespace XEditor
         public Rect TileSelector_SelectedRect;
         public Point2D TileSelector_DraggingOrigin;
 
+        bool HasClearOption = false;
+
         private float scale = 1;
         public float Scale
         {
@@ -65,7 +67,9 @@ namespace XEditor
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             Selector.Visibility = Visibility.Hidden;
+
             Global.TileSize = 16;
+
             Global.State = States.Initialised;
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
@@ -85,8 +89,7 @@ namespace XEditor
 
             LoadRecentFiles();
         }
-
-        private bool HasClearOption = false;
+        
         public void LoadRecentFiles()
         {
             Menu_RecentFiles.IsEnabled = false;

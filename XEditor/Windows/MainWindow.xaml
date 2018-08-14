@@ -8,7 +8,7 @@
         Title="XEditor" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" Closing="Window_Closing">
     <Window.Resources>
         <local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
-        <VisualBrush x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
+        <VisualBrush  x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
             <VisualBrush.Visual>
                 <Grid Background="White">
                     <Path Data="M 0 0 L 0 16" Stroke="Gray" />

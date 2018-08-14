@@ -49,6 +49,20 @@ namespace XEditor
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            if (LayerName.Length == 0)
+            {
+                MessageBoxButton mbb = MessageBoxButton.OK;
+                MessageBox.Show("A layer must be at least 1 character", "Can't do that!", mbb);
+                return;
+            }
+
+            if (LayerName.Contains(' '))
+            {
+                MessageBoxButton mbb = MessageBoxButton.OK;
+                MessageBox.Show("A layer cannot contain any spaces", "Can't do that!", mbb);
+                return;
+            }
+
             if (DefaultLayers.Instance.Layers.Items.Contains(LayerName) && InitialLayerName != LayerName)
             {
                 MessageBoxButton button = MessageBoxButton.OK;

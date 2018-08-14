@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XEditor"
         mc:Ignorable="d"
-        Title="Default layers" Height="273.106" Width="480">
+        Title="Default layers" Height="225.606" Width="480">
     <Grid Margin="4, 4, 4, 4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -13,7 +13,6 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition Height="120"></RowDefinition>
-            <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -42,10 +41,7 @@
 
         <Grid Grid.Column="0" Grid.Row="2">
             <TextBlock Margin="4,4,4,4">Default selected</TextBlock>
-            <ComboBox x:Name="DefaultLayer" Margin="102,4,4,4" Text="Main"></ComboBox>            
+            <ComboBox x:Name="DefaultLayer" Margin="102,4,4,4" Text="Main"></ComboBox>
         </Grid>
-        
-        <Button Content="Update default layers" Grid.Column="0" Grid.Row="3"  Margin="4,4,4,4" Click="UpdateDefaultLayers" />
-
     </Grid>
 </Window>
