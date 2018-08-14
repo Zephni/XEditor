@@ -578,6 +578,7 @@ namespace XEditor
             Global.State = States.MapOpen;
             Global.ToolType = ToolTypes.TilePlacer;
             Global.TileSize = tileSize;
+            Global.OpenFilePath = "";
 
             EditorMargin.Width = EditorGrid.Width + 1000;
             EditorMargin.Height = EditorGrid.Height + 1000;
@@ -594,6 +595,8 @@ namespace XEditor
             Global.State = States.MapClosed;
             Global.Unsaved = false;
             Global.ToolType = ToolTypes.Null;
+
+            resetScrollOffset = true;
         }
 
         public void TilesetSelectArea(Rect rect)

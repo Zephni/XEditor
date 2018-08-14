@@ -9,12 +9,15 @@ namespace XEditor
     /// </summary>
     public partial class LevelSettings : Window
     {
-        public LevelSettings()
+        bool ForceNew;
+        public LevelSettings(bool forceNew = false)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
 
-            if(Global.State != States.MapOpen)
+            ForceNew = forceNew;
+
+            if(ForceNew || Global.State != States.MapOpen)
             {
                 if (!Global.Preferences.KeyExists("LastUsedMapSize"))
                     Global.Preferences.Write("LastUsedMapSize", "64,64");
@@ -60,8 +63,9 @@ namespace XEditor
             if (ync == YesNoCancel.Cancel || ync == YesNoCancel.No)
                 return;
 
-            if (Global.State != States.MapOpen)
+            if (ForceNew || Global.State != States.MapOpen)
             {
+                if(Global.State == States.MapOpen) Global.Command_Close();
                 MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')), Convert.ToInt16(TileSize.Text));
             }
             else

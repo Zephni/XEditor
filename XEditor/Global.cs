@@ -447,7 +447,7 @@ namespace XEditor
                 return;
 
             DialogWindowOpen = true;
-            LevelSettings ls = new LevelSettings();
+            LevelSettings ls = new LevelSettings(true);
             ls.ShowDialog();
             DialogWindowOpen = false;
         }
