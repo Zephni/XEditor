@@ -30,7 +30,7 @@ namespace XEditor
             UpdateChanges();
         }
 
-        private void UpdateDefaultLayers()
+        public void UpdateDefaultLayers()
         {
             List<string> layerStrList = new List<string>();
             foreach (var item in Layers.Items)
@@ -40,7 +40,6 @@ namespace XEditor
 
             Global.Preferences.Write("DefaultLayers", defaultLayersString);
             Global.Preferences.Write("DefaultSelectedLayer", DefaultLayer.Text);
-            this.Close();
         }
 
         public void UpdateChanges()

@@ -76,6 +76,7 @@ namespace XEditor
                     DefaultLayers.Instance.Layers.SelectedIndex = DefaultLayers.Instance.Layers.Items.Count;
 
                 DefaultLayers.Instance.Layers.Items.Insert(DefaultLayers.Instance.Layers.SelectedIndex+1, LayerName);
+                DefaultLayers.Instance.UpdateDefaultLayers();
                 DefaultLayers.Instance.UpdateChanges();
             }
             else if(!CreatingNew)
