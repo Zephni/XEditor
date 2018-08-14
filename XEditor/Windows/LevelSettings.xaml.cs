@@ -24,6 +24,8 @@ namespace XEditor
                 GridSize_Y.Text = lastUsedMapSize[1];
                 TilesetPath.Text = Global.TexturePath;
                 ApplyButton.Content = "Create new level";
+                TileSize.IsEnabled = true;
+                TileSize.Text = (Global.Preferences.KeyExists("TileSize")) ? Global.Preferences.Read("TileSize") : "16";
             }
             else
             {
@@ -31,6 +33,8 @@ namespace XEditor
                 GridSize_Y.Text = Global.MapSize.Y.ToString();
                 TilesetPath.Text = Global.TexturePath;
                 ApplyButton.Content = "Apply changes";
+                TileSize.IsEnabled = false;
+                TileSize.Text = (Global.Preferences.KeyExists("TileSize")) ? Global.TileSize.ToString() : "16";
             }
 
             if (Global.Preferences.KeyExists("LastUsedTileset"))
@@ -40,6 +44,17 @@ namespace XEditor
         private void Apply_Click(object sender, RoutedEventArgs e)
         {
             string tilesetPath = TilesetPath.Text;
+
+            try
+            {
+                int tileSize = Convert.ToInt16(TileSize.Text);
+                Global.Preferences.Write("TileSize", tileSize.ToString());
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("Tile size must be an integer");
+            }
+            
             YesNoCancel ync = Global.ImageChecker(tilesetPath, out tilesetPath);
 
             if (ync == YesNoCancel.Cancel || ync == YesNoCancel.No)
@@ -47,7 +62,7 @@ namespace XEditor
 
             if (Global.State != States.MapOpen)
             {
-                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
+                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')), Convert.ToInt16(TileSize.Text));
             }
             else
             {
@@ -60,7 +75,7 @@ namespace XEditor
                 }
                     
                 // Needs fixing
-                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')));
+                MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')), Convert.ToInt16(TileSize.Text));
                 MainWindow.Instance.AddTiles(newTiles);
                 foreach(Entity entity in entityList)
                 {

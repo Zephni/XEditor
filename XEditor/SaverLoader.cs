@@ -69,6 +69,7 @@ namespace XEditor
             // Config
             xDoc.Root.Add(new XElement("Config",
                 new XElement("MapSize", Global.MapSize.ToString()),
+                new XElement("TileSize", Global.TileSize.ToString()),
                 new XElement("Tileset", Global.TexturePath.Split('\\').Last())
             ));
 
@@ -113,11 +114,13 @@ namespace XEditor
             string[] mapSize = xDoc.Root.Element("Config").Element("MapSize").Value.Split(',');
             Point2D mapSizep = new Point2D(Convert.ToInt16(mapSize[0]), Convert.ToInt16(mapSize[1]));
 
+            int tileSize = Convert.ToInt16(xDoc.Root.Element("Config").Element("TileSize").Value);
+
             List<string> layers = new List<string>();
             foreach(XElement xEl in xDoc.Root.Element("Config").Elements("Layers").Descendants())
                 layers.Add(xEl.Name.ToString());
 
-            MainWindow.Instance.NewMap(mapSizep, tilesetPath, layers);
+            MainWindow.Instance.NewMap(mapSizep, tilesetPath, layers, tileSize);
 
             foreach (XElement xEl in xDoc.Root.Element("Tiles").Elements("Tile"))
             {

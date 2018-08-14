@@ -556,7 +556,7 @@ namespace XEditor
         }
 
         // Methods
-        public void NewMap(Point2D mapSize, string texturePath, List<string> layers)
+        public void NewMap(Point2D mapSize, string texturePath, List<string> layers, int tileSize)
         {
             CloseMap();
             Global.Unsaved = true;
@@ -577,10 +577,13 @@ namespace XEditor
             Global.MapSize = mapSize;
             Global.State = States.MapOpen;
             Global.ToolType = ToolTypes.TilePlacer;
+            Global.TileSize = tileSize;
 
             EditorMargin.Width = EditorGrid.Width + 1000;
             EditorMargin.Height = EditorGrid.Height + 1000;
             resetScrollOffset = true;
+
+            GridDraw.DrawToCanvas(EditorGrid, Global.TileSize, Brushes.Gray);
         }
 
         public void CloseMap()
