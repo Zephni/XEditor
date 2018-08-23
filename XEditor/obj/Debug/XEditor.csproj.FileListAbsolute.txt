@@ -69,3 +69,5 @@ C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\DefaultLayers.baml
 C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\LayerTextInputDialogue.g.cs
 C:\Users\craig.dennis\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\LayerTextInputDialogue.baml
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\LayerTextInputDialogue.g.cs
+C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Debug\Windows\LayerTextInputDialogue.baml

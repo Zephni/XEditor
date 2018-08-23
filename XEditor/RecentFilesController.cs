@@ -14,7 +14,7 @@ namespace XEditor
         {
             List<string> files = new List<string>();
 
-            for(int I = 1; I < MaxFiles; I++)
+            for(int I = 1; I <= MaxFiles; I++)
             {
                 if (Global.Preferences.KeyExists("RecentFile" + I.ToString()))
                     files.Add(Global.Preferences.Read("RecentFile"+I.ToString()));
@@ -30,11 +30,12 @@ namespace XEditor
             if (files.Count > 0 && files.Last() == file)
                 return;
 
-            files.Add(file);
-            Console.WriteLine(String.Join(" ::: ", files));
-            Console.WriteLine(file);
+            if (files.Count >= MaxFiles)
+                files.RemoveAt(0);
 
-            for (int I = 1; I <= MaxFiles; I++)
+            files.Add(file);
+
+            for (int I = 1; I <= MaxFiles+1; I++)
                 Global.Preferences.DeleteKey("RecentFile" + I.ToString());
 
             for (int I = 1; I < files.Count+1; I++)
