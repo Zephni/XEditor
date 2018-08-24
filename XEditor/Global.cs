@@ -425,6 +425,48 @@ namespace XEditor
             StatusBarTextLeft = "Pasted " + CopiedTiles.Count + " tiles)";
         }
 
+        public static List<Entity> CopiedEntities = new List<Entity>();
+        public static void Command_CopyEntities(List<Entity> highlightedEntities)
+        {
+            if (highlightedEntities.Count == 0)
+                return;
+            Entity[] copied = new Entity[highlightedEntities.Count];
+            highlightedEntities.CopyTo(copied);
+            CopiedEntities = copied.ToList();
+
+            StatusBarTextLeft = "Copied " + highlightedEntities[0].Name;
+        }
+
+        public static void Command_CutEntities(List<Entity> highlightedEntities)
+        {
+            if (highlightedEntities.Count == 0)
+                return;
+            Command_CopyEntities(highlightedEntities);
+
+            for (int I = 0; I < highlightedEntities.Count; I++)
+                highlightedEntities[I].Destroy();
+
+            StatusBarTextLeft = "Cut " + highlightedEntities[0].Name;
+        }
+
+        public static void Command_PasteEntities(Point2D newPosition)
+        {
+            foreach(var item in CopiedEntities)
+            {
+                Entity entity = new Entity
+                {
+                    Name = item.Name,
+                    Position = newPosition,
+                    Size = new Point2D(Convert.ToInt16(item.Size.X), Convert.ToInt16(item.Size.Y)),
+                    CustomData = item.CustomData
+                };
+
+                Global.Entities.Add(entity);
+            }
+
+            StatusBarTextLeft = "Pasted " + CopiedEntities[0].Name;
+        }
+
         public static void Command_RemoveTiles(Rect rect, int? layer)
         {
             List<Tile> tiles = Global.Tiles.FindAll(t =>

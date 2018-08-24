@@ -161,6 +161,10 @@ namespace XEditor
             Global.RunOnEventLoop("Ctrl+V", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.V), () => { Global.Command_PasteTiles(TileSelector_SelectedRect, Global.TileLayer); });
             Global.RunOnEventLoop("Delete (Tiles)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.Delete), () => { Global.Command_RemoveTiles(TileSelector_SelectedRect, Global.TileLayer); });
             Global.RunOnEventLoop("Delete (Entities)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.KeyComboDown(Key.Delete), () => { Global.GetSelectedEntities(entity => entity.Destroy()); });
+
+            Global.RunOnEventLoop("Ctrl+C_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.GetSelectedEntities().Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.C), () => { Global.Command_CopyEntities(highlightingEntities); });
+            Global.RunOnEventLoop("Ctrl+X_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.GetSelectedEntities().Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.X), () => { Global.Command_CutEntities(highlightingEntities); });
+            Global.RunOnEventLoop("Ctrl+V_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.CopiedEntities.Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.V), () => { Global.Command_PasteEntities(Global.SelectorIndex); });
         }
 
         public void MouseUpdates(MouseEventArgs e)
@@ -443,9 +447,19 @@ namespace XEditor
         private bool Entities_LeftClickDown = false;
         private void Entities_EditorGrid_MouseUpdates(MouseEventArgs e)
         {
+            Rectangle ThisSelector = Selector;
+            
             if (EditorGrid.IsMouseOver)
             {
                 Global.SelectorIndex = new Point2D((int)e.GetPosition(EditorGrid).X / Global.TileSize, (int)e.GetPosition(EditorGrid).Y / Global.TileSize);
+
+                //
+                ThisSelector.Stroke = new SolidColorBrush(Colors.DarkSlateGray);
+                ThisSelector.Visibility = Visibility.Visible;
+                ThisSelector.Margin = new Thickness(Global.SelectorIndex.X * Global.TileSize, Global.SelectorIndex.Y * Global.TileSize, 0, 0);
+                ThisSelector.Width = Global.TileSize + 1;
+                ThisSelector.Height = Global.TileSize + 1;
+                //
 
                 if (!DraggingEntity)
                 {
@@ -468,6 +482,20 @@ namespace XEditor
                         entity.Selected = true;
                         DraggingOffset = new Point2D(Math.Abs(entity.Position.X - Global.SelectorIndex.X), Math.Abs(entity.Position.Y - Global.SelectorIndex.Y));
                         DraggingEntity = true;
+                    }
+                    else
+                    {
+                        EntitySettings es = new EntitySettings
+                        {
+                            ApplyButtonText = "Create entity",
+                            _EntityName = "Entity",
+                            _PosX = Global.SelectorIndex.X.ToString(),
+                            _PosY = Global.SelectorIndex.Y.ToString(),
+                            _SizeX = "1",
+                            _SizeY = "1"
+                        };
+
+                        es.ShowDialog();
                     }
                 }
 
@@ -508,17 +536,80 @@ namespace XEditor
 
                     foreach(Entity entity in highlightingEntities)
                     {
-                        MenuItem editEntityOption = new MenuItem();
-                        editEntityOption.Header = "Edit " + entity.Name;
-                        editEntityOption.CommandParameter = entity;
-                        editEntityOption.Click += EditEntityOption_Click;
-                        entityContextMenu.Items.Add(editEntityOption);
+                        MenuItem entityOption = new MenuItem();
+                        entityOption.Header = entity.Name;
+
+                        // edit
+                        MenuItem editOption = new MenuItem() { Header = "Edit", CommandParameter = entity };
+                        editOption.Click += EditEntityOption_Click;
+                        entityOption.Items.Add(editOption);
+
+                        // copy
+                        MenuItem copyOption = new MenuItem() { Header = "Copy", CommandParameter = entity };
+                        copyOption.Click += CopyEntityAction;
+                        entityOption.Items.Add(copyOption);
+
+                        // copy
+                        MenuItem cutOption = new MenuItem() { Header = "Cut", CommandParameter = entity };
+                        cutOption.Click += CutEntityAction;
+                        entityOption.Items.Add(cutOption);
+
+                        // remove
+                        MenuItem removeOption = new MenuItem() { Header = "Remove", CommandParameter = entity };
+                        removeOption.Click += DestroyEntityAction;
+                        entityOption.Items.Add(removeOption);
+
+                        entityContextMenu.Items.Add(entityOption);
                     }
+
+                    // paste
+                    MenuItem pasteOption = new MenuItem() { Header = "Paste", CommandParameter = Global.SelectorIndex.X.ToString()+","+Global.SelectorIndex.Y.ToString() };
+                    pasteOption.Click += PasteEntityAction;
+                    if (Global.CopiedEntities.Count == 0) pasteOption.IsEnabled = false;
+                    entityContextMenu.Items.Add(pasteOption);
 
                     entityContextMenu.Closed += Entity_ContextMenu_Closed;
                     entityContextMenu.IsOpen = true;
                 }
             }
+            else
+            {
+                ThisSelector.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void PasteEntityAction(object sender, RoutedEventArgs e)
+        {
+            var button = sender as MenuItem;
+            string[] strPosition = (button.CommandParameter as string).Split(',');
+            Point2D position = new Point2D(Convert.ToInt16(strPosition[0]), Convert.ToInt16(strPosition[1]));
+
+            Global.Command_PasteEntities(position);
+        }
+
+        private void CopyEntityAction(object sender, RoutedEventArgs e)
+        {
+            var button = sender as MenuItem;
+            Entity entity = button.CommandParameter as Entity;
+
+            Global.Command_CopyEntities(new List<Entity> { entity });
+        }
+
+        private void CutEntityAction(object sender, RoutedEventArgs e)
+        {
+            var button = sender as MenuItem;
+            Entity entity = button.CommandParameter as Entity;
+
+            Global.Command_CutEntities(new List<Entity> { entity });
+        }
+
+        private void DestroyEntityAction(object sender, RoutedEventArgs e)
+        {
+            var button = sender as MenuItem;
+            Entity entity = button.CommandParameter as Entity;
+
+            Global.StatusBarTextLeft = "Deleted entity '" + entity.Name + "'";
+            entity.Destroy();
         }
 
         private void NewEntityOption_Click(object sender, RoutedEventArgs e)
@@ -539,7 +630,6 @@ namespace XEditor
         private void EditEntityOption_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as MenuItem;
-            
 
             EntitySettings es = new EntitySettings
             {
