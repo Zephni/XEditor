@@ -45,8 +45,59 @@ namespace XEditor
         No
     }
 
+    public enum LayerViewModes
+    {
+        Solid,
+        CurrentOnly,
+        FadeOtherLayers
+    }
+
     public static class Global
     {
+        // Layer veiw mode
+        private static LayerViewModes layerViewMode = LayerViewModes.Solid;
+        public static LayerViewModes LayerViewMode
+        {
+            get { return layerViewMode; }
+            set
+            {
+                layerViewMode = value;
+
+                if (layerViewMode == LayerViewModes.Solid)
+                {
+                    MainWindow.Instance.Menu_ViewLayerMode_Solid.IsChecked = true;
+                    MainWindow.Instance.Menu_ViewLayerMode_CurrentOnly.IsChecked = false;
+                    MainWindow.Instance.Menu_ViewLayerMode_FadeOthers.IsChecked = false;
+
+                    if (Global.Tiles != null)
+                        foreach (var item in Global.Tiles)
+                            item.Rectangle.Opacity = 1;
+                }
+                else if (layerViewMode == LayerViewModes.CurrentOnly)
+                {
+                    MainWindow.Instance.Menu_ViewLayerMode_Solid.IsChecked = false;
+                    MainWindow.Instance.Menu_ViewLayerMode_CurrentOnly.IsChecked = true;
+                    MainWindow.Instance.Menu_ViewLayerMode_FadeOthers.IsChecked = false;
+
+                    if (Global.Tiles != null)
+                        foreach (var item in Global.Tiles)
+                            item.Rectangle.Opacity = (item.Layer == Global.TileLayer) ? 1 : 0f;
+                }
+                else if(layerViewMode == LayerViewModes.FadeOtherLayers)
+                {
+                    MainWindow.Instance.Menu_ViewLayerMode_Solid.IsChecked = false;
+                    MainWindow.Instance.Menu_ViewLayerMode_CurrentOnly.IsChecked = false;
+                    MainWindow.Instance.Menu_ViewLayerMode_FadeOthers.IsChecked = true;
+
+                    if (Global.Tiles != null)
+                        foreach (var item in Global.Tiles)
+                            item.Rectangle.Opacity = (item.Layer == Global.TileLayer) ? 1 : 0.5f;
+                }
+
+                Global.Preferences.Write("ViewLayer", layerViewMode.ToString());
+            }
+        }
+
         private static States state;
         public static States State
         {
@@ -159,11 +210,16 @@ namespace XEditor
                 Global.Unsaved = true;
                 tileLayer = value;
 
-                if (MainWindow.Instance.TileLayerComboBox.SelectedIndex != tileLayer)
+                MainWindow.Instance.TileLayerComboBox.SelectedIndex = tileLayer;
+                LayerViewMode = layerViewMode;
+                Global.StatusBarTextLeft = "Switched to layer " + MainWindow.Instance.TileLayerComboBox.SelectedValue;
+
+                /*if (MainWindow.Instance.TileLayerComboBox.SelectedIndex != tileLayer)
                 {
                     MainWindow.Instance.TileLayerComboBox.SelectedIndex = tileLayer;
+                    LayerViewMode = layerViewMode;
                     Global.StatusBarTextLeft = "Switched to layer "+ MainWindow.Instance.TileLayerComboBox.SelectedValue;
-                }
+                }*/
             }
         }
 

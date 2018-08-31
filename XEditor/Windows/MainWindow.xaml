@@ -35,6 +35,11 @@
                 <MenuItem Header="Preferences">
                     <MenuItem x:Name="Menu_SaveAsCompressed" Header="Save as compressed" Click="Preferences_SaveAsCompressed" IsCheckable="true" />
                     <MenuItem x:Name="Menu_DefaultLayers" Header="Update default layers" Click="Preferences_DefaultLayers" />
+                    <MenuItem x:Name="Menu_ViewLayerMode" Header="ViewLayerMode">
+                        <MenuItem IsCheckable="True" x:Name="Menu_ViewLayerMode_Solid" Header="Solid" Click="Menu_ViewLayerMode_Solid_Click" />
+                        <MenuItem IsCheckable="True" x:Name="Menu_ViewLayerMode_CurrentOnly" Header="Current only" Click="Menu_ViewLayerMode_CurrentOnly_Click" />
+                        <MenuItem IsCheckable="True" x:Name="Menu_ViewLayerMode_FadeOthers" Header="Fade others" Click="Menu_ViewLayerMode_FadeOthers_Click" />
+                    </MenuItem>
                 </MenuItem>
             </Menu>
 

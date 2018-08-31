@@ -74,7 +74,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.02";
+            Global.StatusBarTextLeft = "Initialised v1.03";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {
@@ -86,6 +86,11 @@ namespace XEditor
                 Global.Preferences.Write("DefaultSelectedLayer", "Main");
 
             Menu_SaveAsCompressed.IsChecked = SaveAsCompressed;
+
+            string ViewLayer = Global.Preferences.Read("ViewLayer");
+            if (ViewLayer == "Solid") Global.LayerViewMode = LayerViewModes.Solid;
+            else if (ViewLayer == "CurrentOnly") Global.LayerViewMode = LayerViewModes.CurrentOnly;
+            else if (ViewLayer == "FadeOtherLayers") Global.LayerViewMode = LayerViewModes.FadeOtherLayers;
 
             LoadRecentFiles();
         }
@@ -738,6 +743,8 @@ namespace XEditor
         {
             foreach (Tile tile in tiles)
                 AddTile(tile);
+
+            Global.LayerViewMode = Global.LayerViewMode;
         }
 
         public List<Tile> GetTileList()
@@ -973,6 +980,21 @@ namespace XEditor
 
                 Global.StatusBarTextLeft = "Zoomed to x" + Scale.ToString();
             }
+        }
+
+        private void Menu_ViewLayerMode_Solid_Click(object sender, RoutedEventArgs e)
+        {
+            Global.LayerViewMode = LayerViewModes.Solid;
+        }
+
+        private void Menu_ViewLayerMode_CurrentOnly_Click(object sender, RoutedEventArgs e)
+        {
+            Global.LayerViewMode = LayerViewModes.CurrentOnly;
+        }
+
+        private void Menu_ViewLayerMode_FadeOthers_Click(object sender, RoutedEventArgs e)
+        {
+            Global.LayerViewMode = LayerViewModes.FadeOtherLayers;
         }
     }
 }
