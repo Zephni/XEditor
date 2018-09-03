@@ -74,7 +74,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.03";
+            Global.StatusBarTextLeft = "Initialised v1.04";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {
@@ -793,7 +793,10 @@ namespace XEditor
         public void RemoveAllEntities()
         {
             for (int i = 0; i < Global.Entities.Count; i++)
+            {
+                
                 Global.Entities[i].Destroy();
+            }
         }
 
         // Window events

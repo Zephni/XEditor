@@ -83,7 +83,7 @@ namespace XEditor
                         foreach (var item in Global.Tiles)
                             item.Rectangle.Opacity = (item.Layer == Global.TileLayer) ? 1 : 0f;
                 }
-                else if(layerViewMode == LayerViewModes.FadeOtherLayers)
+                else if (layerViewMode == LayerViewModes.FadeOtherLayers)
                 {
                     MainWindow.Instance.Menu_ViewLayerMode_Solid.IsChecked = false;
                     MainWindow.Instance.Menu_ViewLayerMode_CurrentOnly.IsChecked = false;
@@ -570,6 +570,7 @@ namespace XEditor
 
             if (filePath != "")
             {
+                if (Global.State == States.MapOpen) Global.Command_Close();
                 SaverLoader sl = new SaverLoader();
                 sl.Load(filePath);
                 Global.OpenFilePath = filePath;
