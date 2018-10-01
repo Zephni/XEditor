@@ -74,7 +74,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.05";
+            Global.StatusBarTextLeft = "Initialised v1.06";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {
@@ -566,6 +566,11 @@ namespace XEditor
                         removeOption.Click += DestroyEntityAction;
                         entityOption.Items.Add(removeOption);
 
+                        // brint to front
+                        MenuItem bringToFrontOption = new MenuItem() { Header = "Bring to front", CommandParameter = entity };
+                        bringToFrontOption.Click += BringToFrontAction;
+                        entityOption.Items.Add(bringToFrontOption);
+
                         entityContextMenu.Items.Add(entityOption);
                     }
 
@@ -617,6 +622,17 @@ namespace XEditor
 
             Global.StatusBarTextLeft = "Deleted entity '" + entity.Name + "'";
             entity.Destroy();
+        }
+
+        private void BringToFrontAction(object sender, RoutedEventArgs e)
+        {
+            var button = sender as MenuItem;
+            Entity entity = button.CommandParameter as Entity;
+
+            //entity.Selected = true;
+            Global.Entities.Remove(entity);
+            Global.Entities.Add(entity);
+            entity.Selected = true;
         }
 
         private void NewEntityOption_Click(object sender, RoutedEventArgs e)
