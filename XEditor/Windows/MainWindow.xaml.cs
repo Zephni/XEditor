@@ -74,7 +74,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.04";
+            Global.StatusBarTextLeft = "Initialised v1.05";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {
@@ -163,6 +163,8 @@ namespace XEditor
             // Shortcuts
             Global.RunOnEventLoop("Ctrl+C", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.C), () => { Global.Command_CopyTiles(TileSelector_SelectedRect, Global.TileLayer); });
             Global.RunOnEventLoop("Ctrl+X", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.X), () => { Global.Command_CutTiles(TileSelector_SelectedRect, Global.TileLayer); });
+            Global.RunOnEventLoop("Shift+X", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftShift, Key.X), () => { Global.Command_CutTiles(TileSelector_SelectedRect, null); });
+            Global.RunOnEventLoop("Shift+V", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftShift, Key.V), () => { Global.Command_PasteTiles(TileSelector_SelectedRect, null); });
             Global.RunOnEventLoop("Ctrl+V", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.LeftCtrl, Key.V), () => { Global.Command_PasteTiles(TileSelector_SelectedRect, Global.TileLayer); });
             Global.RunOnEventLoop("Delete (Tiles)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.TileSelector && TileSelector_RectangleSelected != null && Global.KeyComboDown(Key.Delete), () => { Global.Command_RemoveTiles(TileSelector_SelectedRect, Global.TileLayer); });
             Global.RunOnEventLoop("Delete (Entities)", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.KeyComboDown(Key.Delete), () => { Global.GetSelectedEntities(entity => entity.Destroy()); });
@@ -794,9 +796,10 @@ namespace XEditor
         {
             for (int i = 0; i < Global.Entities.Count; i++)
             {
-                
                 Global.Entities[i].Destroy();
             }
+
+            Global.Entities = new List<Entity>();
         }
 
         // Window events
@@ -998,6 +1001,21 @@ namespace XEditor
         private void Menu_ViewLayerMode_FadeOthers_Click(object sender, RoutedEventArgs e)
         {
             Global.LayerViewMode = LayerViewModes.FadeOtherLayers;
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // Note that you can have more than one file.
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // Assuming you have one file that you care about, pass it off to whatever
+                // handling code you have defined.
+                string file = files[0];
+
+                Global.Command_Open(file);
+            }
         }
     }
 }

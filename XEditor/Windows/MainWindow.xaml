@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:XEditor"
         mc:Ignorable="d"
-        Title="XEditor" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" Closing="Window_Closing">
+        Title="XEditor" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" Closing="Window_Closing" AllowDrop="True" Drop="Window_Drop">
     <Window.Resources>
         <local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
         <VisualBrush  x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
@@ -43,7 +43,7 @@
                 </MenuItem>
             </Menu>
 
-            <Grid x:Name="EditorContainer" Visibility="Hidden">
+            <Grid x:Name="EditorContainer" Visibility="Visible">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="200" MaxWidth="350" />
                     <ColumnDefinition Width="5" />
@@ -73,18 +73,19 @@
 
                         <Grid Margin="12,0,12,12">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="3*"></ColumnDefinition>
-                                <ColumnDefinition Width="3*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
-                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                <ColumnDefinition Width="2*"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
+                                <ColumnDefinition Width="1*"></ColumnDefinition>
                             </Grid.ColumnDefinitions>
-                            <Button Click="AddLayer_Click" Grid.Column="0" Margin="0,0,40,0" Padding="0,0,0,3">Add new</Button>
-                            <Button Click="EditLayer_Click" Grid.Column="0" Margin="87,0,83,0" Padding="0,0,0,3" Grid.ColumnSpan="2">Edit</Button>
-                            <Button Click="RemoveLayer_Click" Grid.Column="1" Margin="44,0,0,0" Padding="0,0,0,3">Remove</Button>
-                            <Button Click="MoveLayerUp_Click" Grid.Column="2" Margin="4,0,0,0">
+                            <Button Click="AddLayer_Click" Grid.Column="0" Margin="0,0,0,0" Padding="0,0,0,3">Add new</Button>
+                            <Button Click="EditLayer_Click" Grid.Column="1" Margin="4,0,0,0" Padding="0,0,0,3">Edit</Button>
+                            <Button Click="RemoveLayer_Click" Grid.Column="2" Margin="4,0,0,0" Padding="0,0,0,3">Remove</Button>
+                            <Button Click="MoveLayerUp_Click" Grid.Column="3" Margin="4,0,0,0">
                                 <ContentControl Margin="10" Template="{StaticResource ArrowUp}" />
                             </Button>
-                            <Button Click="MoveLayerDown_Click" Grid.Column="3" Margin="4,0,0,0">
+                            <Button Click="MoveLayerDown_Click" Grid.Column="4" Margin="4,0,0,0">
                                 <ContentControl Margin="10" Template="{StaticResource ArrowDown}" />
                             </Button>
                         </Grid>

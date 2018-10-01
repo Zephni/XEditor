@@ -443,7 +443,7 @@ namespace XEditor
                 && t.Location.Y >= rect.Y
                 && t.Location.X < rect.X + rect.Width
                 && t.Location.Y < rect.Y + rect.Height
-                && t.Layer == ((layer != null) ? layer : t.Layer)
+                && ((layer != null) ? (t.Layer == layer) : true)
             );
 
             StatusBarTextLeft = "Copied " + CopiedTiles.Count + " tiles)";
