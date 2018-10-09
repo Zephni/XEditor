@@ -12,6 +12,11 @@ namespace XEditor
 {
     public static class GridDraw
     {
+        public static void ClearCanvas(Canvas canvas, Brush backgroundColor = null)
+        {
+            canvas.Background = (backgroundColor != null) ? backgroundColor : Brushes.White;
+        }
+
         public static void DrawToCanvas(Canvas canvas, int tileSize, Brush strokeColor = null, Brush backgroundColor = null)
         {
             // Build visual brush

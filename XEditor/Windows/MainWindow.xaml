@@ -8,14 +8,6 @@
         Title="XEditor" Width="1080" Height="600" MouseMove="Window_MouseMove" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" Closing="Window_Closing" AllowDrop="True" Drop="Window_Drop">
     <Window.Resources>
         <local:EnumMatchToBooleanConverter x:Key="EnumConverter" />
-        <VisualBrush  x:Key="GridBrush" TileMode="Tile" Viewport="0,0,16,16" ViewportUnits="Absolute" Viewbox="0,0,16,16" ViewboxUnits="Absolute" >
-            <VisualBrush.Visual>
-                <Grid Background="White">
-                    <Path Data="M 0 0 L 0 16" Stroke="Gray" />
-                    <Path Data="M 0 0 L 16 0" Stroke="Gray" />
-                </Grid>
-            </VisualBrush.Visual>
-        </VisualBrush>
     </Window.Resources>
     <Grid Background="Gray">
         <DockPanel Margin="0,0,0,24">
@@ -34,6 +26,7 @@
                 </MenuItem>
                 <MenuItem Header="Preferences">
                     <MenuItem x:Name="Menu_SaveAsCompressed" Header="Save as compressed" Click="Preferences_SaveAsCompressed" IsCheckable="true" />
+                    <MenuItem x:Name="Menu_ShowGrid" Header="Show grid" Click="Preferences_ShowGrid" IsCheckable="true" />
                     <MenuItem x:Name="Menu_DefaultLayers" Header="Update default layers" Click="Preferences_DefaultLayers" />
                     <MenuItem x:Name="Menu_ViewLayerMode" Header="ViewLayerMode">
                         <MenuItem IsCheckable="True" x:Name="Menu_ViewLayerMode_Solid" Header="Solid" Click="Menu_ViewLayerMode_Solid_Click" />

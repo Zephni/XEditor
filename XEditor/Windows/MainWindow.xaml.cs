@@ -60,6 +60,29 @@ namespace XEditor
             }
         }
 
+        public bool ShowGrid
+        {
+            get
+            {
+                if (!Global.Preferences.KeyExists("ShowGrid"))
+                    Global.Preferences.Write("ShowGrid", "1");
+
+                return (Global.Preferences.Read("ShowGrid") != "0");
+            }
+            set
+            {
+                Menu_ShowGrid.IsChecked = value;
+                Global.Preferences.Write("ShowGrid", (value == false) ? "0" : "1");
+
+                if (value)
+                    GridDraw.DrawToCanvas(EditorGrid, Global.TileSize, Brushes.DarkSlateGray, Brushes.White);
+                else
+                    GridDraw.ClearCanvas(EditorGrid);
+
+                Global.StatusBarTextLeft = (ShowGrid) ? "Set to show grid" : "Set to hide grid";
+            }
+        }
+
         // Constructor
         public MainWindow()
         {
@@ -74,7 +97,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.06";
+            Global.StatusBarTextLeft = "Initialised v1.07";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {
@@ -86,6 +109,7 @@ namespace XEditor
                 Global.Preferences.Write("DefaultSelectedLayer", "Main");
 
             Menu_SaveAsCompressed.IsChecked = SaveAsCompressed;
+            Menu_ShowGrid.IsChecked = ShowGrid;
 
             string ViewLayer = Global.Preferences.Read("ViewLayer");
             if (ViewLayer == "Solid") Global.LayerViewMode = LayerViewModes.Solid;
@@ -172,6 +196,8 @@ namespace XEditor
             Global.RunOnEventLoop("Ctrl+C_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.GetSelectedEntities().Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.C), () => { Global.Command_CopyEntities(highlightingEntities); });
             Global.RunOnEventLoop("Ctrl+X_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.GetSelectedEntities().Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.X), () => { Global.Command_CutEntities(highlightingEntities); });
             Global.RunOnEventLoop("Ctrl+V_Entities", Global.State == States.MapOpen && Global.ToolType == ToolTypes.Entities && Global.CopiedEntities.Count > 0 && Global.KeyComboDown(Key.LeftCtrl, Key.V), () => { Global.Command_PasteEntities(Global.SelectorIndex); });
+
+            Global.RunOnEventLoop("Ctrl+G", Global.KeyComboDown(Key.LeftCtrl, Key.G), () => { ShowGrid = !ShowGrid; });
         }
 
         public void MouseUpdates(MouseEventArgs e)
@@ -697,7 +723,8 @@ namespace XEditor
             EditorMargin.Height = EditorGrid.Height + 1000;
             resetScrollOffset = true;
 
-            GridDraw.DrawToCanvas(EditorGrid, Global.TileSize, Brushes.Gray);
+            ShowGrid = ShowGrid;
+            //GridDraw.DrawToCanvas(EditorGrid, Global.TileSize, Brushes.Gray);
         }
 
         public void CloseMap()
@@ -1032,6 +1059,12 @@ namespace XEditor
 
                 Global.Command_Open(file);
             }
+        }
+
+        private void Preferences_ShowGrid(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            ShowGrid = menuItem.IsChecked;
         }
     }
 }
