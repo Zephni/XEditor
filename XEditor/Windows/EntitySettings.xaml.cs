@@ -97,6 +97,7 @@ namespace XEditor
 
                 Global.Entities.Add(entity);
                 entity.Selected = true;
+                entity.Rectangle.ToolTip = entity.Name;
                 Global.StatusBarTextLeft = "Created entity '"+entity.Name+"'";
             }
             else
@@ -105,6 +106,7 @@ namespace XEditor
                 editingEntity.Position = new Point2D(Convert.ToInt16(_PosX), Convert.ToInt16(_PosY));
                 editingEntity.Size = new Point2D(Convert.ToInt16(_SizeX), Convert.ToInt16(_SizeY));
                 editingEntity.CustomData = _CustomData;
+                editingEntity.Rectangle.ToolTip = _EntityName;
                 Global.StatusBarTextLeft = "Edited entity '" + EditingEntity.Name + "'";
             }
 

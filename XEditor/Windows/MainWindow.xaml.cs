@@ -97,7 +97,7 @@ namespace XEditor
             Global.Layers = new List<string>();
             Global.Entities = new List<Entity>();
             new Updater().Start(17, Update);
-            Global.StatusBarTextLeft = "Initialised v1.07";
+            Global.StatusBarTextLeft = "Initialised v1.08";
 
             if(!Global.Preferences.KeyExists("DefaultLayers"))
             {

@@ -77,11 +77,16 @@ namespace XEditor
                     entityList.Add(Global.Entities[i]);
                     Global.Entities[i].Destroy();
                 }
-                    
+
                 // Needs fixing
+                MainWindow.Instance.CloseMap();
                 MainWindow.Instance.NewMap(new Point2D(Convert.ToInt32(GridSize_X.Text), Convert.ToInt32(GridSize_Y.Text)), tilesetPath, new List<string>(Global.Preferences.Read("DefaultLayers").Split('|')), Convert.ToInt16(TileSize.Text));
+
+                foreach(var tile in newTiles)
+                    tile.TilesetLocation = tile.TilesetLocation; // This refreshes the tileset
                 MainWindow.Instance.AddTiles(newTiles);
-                foreach(Entity entity in entityList)
+
+                foreach (Entity entity in entityList)
                 {
                     entity.AddToGrid();
                     Global.Entities.Add(entity);

@@ -95,7 +95,7 @@ namespace XEditor
             }
         }
 
-        private Rectangle Rectangle;
+        public Rectangle Rectangle;
 
         public Entity()
         {

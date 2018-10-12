@@ -47,8 +47,9 @@ namespace XEditor
                 Rectangle.VerticalAlignment = VerticalAlignment.Top;
                 Rectangle.Width = Global.TileSize;
                 Rectangle.Height = Global.TileSize;
+                
 
-                if(Global.Bitmap != null)
+                if (Global.Bitmap != null)
                     if (Global.Bitmap.Width >= ((int)tilesetLocation.X * Global.TileSize) + Global.TileSize
                         && Global.Bitmap.Height >= ((int)tilesetLocation.Y * Global.TileSize) + Global.TileSize)
                     {

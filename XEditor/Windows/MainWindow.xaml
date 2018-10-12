@@ -102,7 +102,7 @@
                             <Grid.LayoutTransform>
                                 <ScaleTransform x:Name="EditorScale" CenterX="0" CenterY="0" ScaleX="1" ScaleY="1" />
                             </Grid.LayoutTransform>
-                            <Canvas  Name="EditorGrid" Background="White" MouseWheel="EditorGrid_MouseWheel" MouseDown="Window_MouseDown">
+                            <Canvas  Name="EditorGrid" Background="White" MouseWheel="EditorGrid_MouseWheel" MouseDown="Window_MouseDown" RenderOptions.EdgeMode="Aliased">
                                 <Rectangle Name="Selector" Panel.ZIndex="10" Width="17" Height="17" Stroke="Black" HorizontalAlignment="Left" VerticalAlignment="Top"></Rectangle>
                             </Canvas>
                         </Grid>
