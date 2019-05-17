@@ -117,6 +117,11 @@ namespace XEditor
             else if (ViewLayer == "FadeOtherLayers") Global.LayerViewMode = LayerViewModes.FadeOtherLayers;
 
             LoadRecentFiles();
+
+            if(Global.passedExecuteArguments != null && Global.passedExecuteArguments.Length > 0)
+            {
+                Global.Command_Open(Global.passedExecuteArguments[0]);
+            }
         }
         
         public void LoadRecentFiles()

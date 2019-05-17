@@ -50,7 +50,7 @@ namespace XEditor
                 }
                 catch(Exception)
                 {
-                    MessageBox.Show("Invalid file type");
+                    MessageBox.Show("Invalid file type '"+file+"'");
                 }
             }            
         }

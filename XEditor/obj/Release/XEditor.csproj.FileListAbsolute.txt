@@ -69,3 +69,29 @@ C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Releas
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Release\XEditor.csproj.CoreCompileInputs.cache
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Release\XEditor.exe
 C:\Users\Zephni\Documents\Visual Studio 2017\Projects\XEditor\XEditor\obj\Release\XEditor.pdb
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\bin\Release\XEditor.exe.config
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\bin\Release\XEditor.exe
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\bin\Release\XEditor.pdb
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.csprojAssemblyReference.cache
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\DefaultLayers.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\EntitySettings.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\AddLayer.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\LayerTextInputDialogue.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\LevelSettings.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\MainWindow.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\App.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor_MarkupCompile.cache
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor_MarkupCompile.lref
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\DefaultLayers.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\EntitySettings.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\AddLayer.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\LayerTextInputDialogue.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\LevelSettings.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\Windows\MainWindow.baml
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.g.resources
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.Properties.Resources.resources
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.csproj.GenerateResource.cache
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.csproj.CoreCompileInputs.cache
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.exe
+C:\Users\craig.dennis\Downloads\XEditor-master\XEditor-master\XEditor\obj\Release\XEditor.pdb

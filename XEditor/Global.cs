@@ -54,6 +54,8 @@ namespace XEditor
 
     public static class Global
     {
+        public static string[] passedExecuteArguments = null;
+
         // Layer veiw mode
         private static LayerViewModes layerViewMode = LayerViewModes.Solid;
         public static LayerViewModes LayerViewMode
